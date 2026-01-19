@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
+    <title>ARXOS - Where Performance Meets Penetration Testing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --accent: #ffffff;
+            --accent-hover: #cccccc;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Video Intro Overlay - 6 seconds */
+        #video-intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        #video-intro.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #intro-video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Main content hidden until video completes */
+        #main-content {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Video Background */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.12;
+            filter: grayscale(1) contrast(1.3);
+        }
+
+        .video-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0.95) 100%);
+            pointer-events: none;
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-scroll 20s linear infinite;
+        }
+
+        @keyframes grid-scroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--accent);
+            z-index: 9999;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 15px 60px;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom-color: var(--accent);
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 4px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logo:hover {
+            letter-spacing: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-transform: uppercase;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+
+        .hero-logo {
+            width: 320px;
+            max-width: 85%;
+            margin-bottom: 50px;
+            animation: float-smooth 8s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.15));
+            transition: all 0.5s ease;
+        }
+
+        .hero-logo:hover {
+            filter: drop-shadow(0 0 60px rgba(255, 255, 255, 0.3));
+            transform: scale(1.05);
+        }
+
+        @keyframes float-smooth {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(1deg); }
+            75% { transform: translateY(-15px) rotate(-1deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            color: var(--accent);
+            letter-spacing: 8px;
+            animation: fade-in-up 1s ease both;
+            animation-delay: 0.2s;
+            text-transform: uppercase;
+        }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tagline {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+            letter-spacing: 3px;
+            font-weight: 300;
+            animation: fade-in-up 1s ease both;
+            animation-delay: 0.4s;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fade-in-up 1s ease both;
+            animation-delay: 0.6s;
+        }
+
+        .btn {
+            padding: 18px 45px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Share Tech Mono', monospace;
+            border: 2px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 8px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        .btn:hover {
+            color: var(--bg-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Section Styling */
+        .section {
+            padding: 120px 60px;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 80px;
+            color: var(--accent);
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Feature Cards Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 45px 35px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.9;
+            font-size: 15px;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 45px 30px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.4s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.4s ease;
+        }
+
+        .stat-item:hover::after {
+            width: 100%;
+        }
+
+        .stat-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            color: var(--accent);
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 3px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Contact Info Box */
+        .contact-info {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 50px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.4s ease;
+        }
+
+        .contact-info:hover {
+            border-color: var(--accent);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.08);
+        }
+
+        .contact-item {
+            margin: 30px 0;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .contact-item strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .contact-item a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            background: var(--bg-primary);
+        }
+
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: 'Share Tech Mono', monospace;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 2px solid var(--accent);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .scroll-top:hover {
+            background: transparent;
+        }
+
+        .scroll-top i {
+            color: var(--bg-primary);
+            font-size: 1.2rem;
+        }
+
+        .scroll-top:hover i {
+            color: var(--accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .nav-links {
+                gap: 20px;
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+                letter-spacing: 4px;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .section {
+                padding: 80px 30px;
+            }
+
+            .features-grid, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Intro - 6 seconds -->
+    <div id="video-intro">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="arxos.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Scroll Progress Bar -->
+        <div class="scroll-progress" id="scrollProgress"></div>
+
+        <!-- Scroll to Top Button -->
+        <button class="scroll-top" id="scrollTopBtn">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <!-- Video Background -->
+        <div class="video-background">
+            <video autoplay muted loop playsinline>
+                <source src="oxbv1.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <!-- Grid Overlay -->
+        <div class="grid-overlay"></div>
+
+        <!-- Navigation -->
+        <nav id="navbar">
+            <a href="#" class="logo">ARXOS</a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#stats">Stats</a>
+                <a href="#download">Download</a>
+                <a href="#scripts">Scripts</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <img src="ARXOS.png" alt="ARXOS Logo" class="hero-logo">
+            <h1>ARXOS</h1>
+            <p class="tagline">Where Performance Meets Penetration Testing</p>
+            <div class="cta-buttons">
+                <a href="#download" class="btn">
+                    <i class="fas fa-download"></i>
+                    Download ISO
+                </a>
+                <a href="https://0xb0rn3.github.io" class="btn" target="_blank">
+                    <i class="fas fa-user"></i>
+                    Developer Portfolio
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section" id="features">
+            <h2 class="section-title">Why ARXOS?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔥</div>
+                    <h3>2800+ Security Tools</h3>
+                    <p>Complete BlackArch arsenal pre-installed. From reconnaissance to exploitation, everything you need for professional penetration testing at your fingertips.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Performance Optimized</h3>
+                    <p>CPU Governor included for maximum performance. Configured for speed, not bloat. Every resource dedicated to your security work.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>KDE Plasma Desktop</h3>
+                    <p>Beautiful, customizable, and powerful. Modern desktop environment tailored for professionals who demand both aesthetics and functionality.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Zero Bloat</h3>
+                    <p>Pure ArchBang base. No unnecessary packages. Only essential tools and 2800+ pentesting utilities. Your system, your way.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Custom ZSH Config</h3>
+                    <p>Optimized shell with aliases: 'update' for system updates, 'install' for packages, 'diskinfo' for storage. Efficiency at your fingertips.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Built for Hackers</h3>
+                    <p>Designed by hackers, for hackers. Perfect for bug bounties, penetration testing, security research, and ethical hacking.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="section" id="stats">
+            <h2 class="section-title">By The Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">2800+</div>
+                    <div class="stat-label">Security Tools</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Bloatware</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Customizable</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Possibilities</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section class="section" id="download">
+            <h2 class="section-title">Get ARXOS</h2>
+            <div class="contact-info">
+                <p style="color: var(--text-secondary); margin-bottom: 40px; line-height: 2; font-size: 16px;">
+                    Download ARXOS and unleash the full power of professional penetration testing. 
+                    Based on ArchBang with complete BlackArch integration.
+                </p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="#" class="btn">
+                        <i class="fas fa-download"></i>
+                        Download ISO
+                    </a>
+                    <a href="https://github.com/thearxos/thearxos.github.io/issues/new?labels=feature-request&template=feature_request.md" target="_blank" class="btn">
+                        <i class="fab fa-github"></i>
+                        Request Features
+                    </a>
+                </div>
+                <p style="color: var(--text-muted); margin-top: 40px; font-size: 13px;">
+                    SHA256 Checksum will be available with download
+                </p>
+            </div>
+        </section>
+
+        <!-- Custom Scripts Section -->
+        <section class="section" id="scripts">
+            <h2 class="section-title">Custom ARXOS Scripts</h2>
+            <div class="contact-info">
+                <p style="color: var(--text-secondary); margin-bottom: 40px; line-height: 2; font-size: 16px;">
+                    Access our collection of custom automation scripts designed specifically for ARXOS. 
+                    Enhance your workflow with powerful tools built by the community.
+                </p>
+                <a href="https://github.com/thearxos/arxos-scripts" target="_blank" class="btn">
+                    <i class="fas fa-code"></i>
+                    Browse Scripts Repository
+                </a>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <h2 class="section-title">Contact & Support</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <strong>Support Email</strong><br>
+                    <a href="mailto:contact.arxos@proton.me">contact.arxos@proton.me</a>
+                </div>
+                <div class="contact-item">
+                    <strong>Developer</strong><br>
+                    <a href="https://0xb0rn3.github.io" target="_blank">0xb0rn3.github.io</a>
+                </div>
+                <div class="contact-item">
+                    <strong>GitHub</strong><br>
+                    <a href="https://github.com/0xb0rn3" target="_blank">github.com/0xb0rn3</a>
+                </div>
+                <div class="contact-item">
+                    <strong>GitHub Issues</strong><br>
+                    <a href="https://github.com/thearxos/thearxos.github.io/issues" target="_blank">Report Issues & Requests</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2025 ARXOS. Created by 0xb0rn3</p>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#download">Download</a>
+                <a href="#scripts">Scripts</a>
+                <a href="#contact">Contact</a>
+                <a href="https://0xb0rn3.github.io" target="_blank">Portfolio</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Video intro timing - exactly 6 seconds
+        const videoIntro = document.getElementById('video-intro');
+        const introVideo = document.getElementById('intro-video');
+        const mainContent = document.getElementById('main-content');
+
+        function showMainContent() {
+            videoIntro.classList.add('fade-out');
+            setTimeout(() => {
+                videoIntro.style.display = 'none';
+                mainContent.classList.add('visible');
+            }, 500);
+        }
+
+        // Hide video intro after exactly 6 seconds
+        setTimeout(showMainContent, 6000);
+
+        // Also hide if video ends naturally (fallback)
+        introVideo.addEventListener('ended', showMainContent);
+
+        // Skip on click (optional user interaction)
+        videoIntro.addEventListener('click', showMainContent);
+
+        // Scroll progress bar
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / scrollHeight) * 100;
+            scrollProgress.style.width = scrolled + '%';
+
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Show/hide scroll to top button
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            if (window.scrollY > 500) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Scroll to top functionality
+        document.getElementById('scrollTopBtn').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        console.log('%cARXOS Landing Page', 'color: #ffffff; font-size: 20px; font-weight: bold;');
+        console.log('%cBuilt for hackers, by hackers);
