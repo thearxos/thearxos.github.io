@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
     <title>Welcome to ARXOS</title>
     <style>
@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -27,12 +28,16 @@
             color: #ffffff;
             font-family: 'JetBrains Mono', monospace;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
             margin: 0;
             padding: 0;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
 
         /* Video intro overlay */
@@ -62,6 +67,28 @@
             object-fit: contain;
         }
 
+        /* Fallback for mobile if video doesn't play */
+        .mobile-intro {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mobile-intro.show {
+            display: block;
+        }
+
+        .mobile-intro h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: 900;
+            color: var(--accent-light);
+            text-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
         /* Matrix canvas */
         #matrix-canvas {
             position: fixed;
@@ -83,9 +110,10 @@
             position: relative;
             z-index: 10;
             text-align: center;
-            padding: 40px 20px;
+            padding: clamp(20px, 5vw, 40px);
             opacity: 0;
             transition: opacity 1.2s ease;
+            max-width: 100%;
         }
 
         .welcome-container.visible {
@@ -94,12 +122,12 @@
 
         .welcome-text h2 {
             font-family: 'Orbitron', monospace;
-            font-size: 3.5rem;
+            font-size: clamp(1.5rem, 6vw, 3.5rem);
             font-weight: 900;
-            margin-bottom: 25px;
+            margin-bottom: clamp(15px, 4vw, 25px);
             color: var(--fg);
             text-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
-            letter-spacing: 8px;
+            letter-spacing: clamp(3px, 1.5vw, 8px);
             animation: glow 3s ease-in-out infinite;
         }
 
@@ -110,12 +138,12 @@
 
         .welcome-text h1 {
             font-family: 'Orbitron', monospace;
-            font-size: 6rem;
+            font-size: clamp(2.5rem, 12vw, 6rem);
             font-weight: 900;
             color: var(--accent-light);
             text-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
-            letter-spacing: 14px;
-            margin-bottom: 35px;
+            letter-spacing: clamp(5px, 2.5vw, 14px);
+            margin-bottom: clamp(20px, 5vw, 35px);
             animation: pulse 2s ease-in-out infinite;
         }
 
@@ -135,21 +163,22 @@
         }
 
         .welcome-text p {
-            font-size: 1.4rem;
-            letter-spacing: 4px;
+            font-size: clamp(0.9rem, 3vw, 1.4rem);
+            letter-spacing: clamp(2px, 1vw, 4px);
             color: var(--glow-grey);
-            margin-top: 30px;
+            margin-top: clamp(15px, 4vw, 30px);
+            line-height: 1.6;
         }
 
         /* Enter button */
         .cta-button {
             position: fixed;
-            bottom: 40px;
+            bottom: clamp(100px, 15vh, 140px);
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
-            padding: 25px 60px;
-            font-size: 18px;
+            padding: clamp(18px, 4vw, 25px) clamp(40px, 10vw, 60px);
+            font-size: clamp(14px, 3.5vw, 18px);
             font-weight: 700;
             font-family: 'Orbitron', monospace;
             border: 3px solid var(--accent-light);
@@ -159,10 +188,11 @@
             transition: all 0.4s ease;
             text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: clamp(2px, 0.5vw, 3px);
             border-radius: 50px;
             box-shadow: 0 0 30px rgba(224, 224, 224, 0.2);
             opacity: 0;
+            white-space: nowrap;
         }
 
         .cta-button.visible {
@@ -188,37 +218,39 @@
             border-radius: 50px;
         }
 
-        .cta-button:hover::before {
+        .cta-button:active::before {
             width: 100%;
         }
 
-        .cta-button:hover {
+        .cta-button:active {
             color: var(--bg-hard);
             box-shadow: 0 20px 50px rgba(224, 224, 224, 0.5);
         }
 
         .arrow {
             display: inline-block;
-            margin-left: 10px;
+            margin-left: clamp(5px, 2vw, 10px);
             transition: transform 0.3s ease;
         }
 
-        .cta-button:hover .arrow {
+        .cta-button:active .arrow {
             transform: translateX(10px);
         }
 
         /* Footer */
         .footer-text {
             position: fixed;
-            bottom: 20px;
+            bottom: clamp(15px, 3vh, 20px);
             left: 50%;
             transform: translateX(-50%);
-            font-size: 13px;
+            font-size: clamp(10px, 2.5vw, 13px);
             color: var(--fg-dim);
-            letter-spacing: 2px;
+            letter-spacing: clamp(1px, 0.5vw, 2px);
             z-index: 2;
             opacity: 0;
             transition: opacity 1s ease;
+            text-align: center;
+            padding: 0 10px;
         }
 
         .footer-text.visible {
@@ -228,13 +260,14 @@
         /* Visitor counter badge */
         .visitor-badge {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: clamp(50px, 8vh, 70px);
+            right: 50%;
+            transform: translateX(50%);
             background: rgba(0, 0, 0, 0.9);
             border: 2px solid var(--accent-light);
-            padding: 15px 25px;
+            padding: clamp(10px, 3vw, 15px) clamp(20px, 5vw, 25px);
             border-radius: 50px;
-            font-size: 13px;
+            font-size: clamp(11px, 2.5vw, 13px);
             color: var(--fg-dim);
             z-index: 100;
             backdrop-filter: blur(10px);
@@ -251,7 +284,7 @@
             color: var(--accent-light);
             font-weight: 700;
             font-family: 'Orbitron', monospace;
-            font-size: 16px;
+            font-size: clamp(13px, 3vw, 16px);
         }
 
         /* Page transition */
@@ -263,28 +296,81 @@
             to { opacity: 0; }
         }
 
-        /* Responsive */
+        /* Mobile optimizations */
         @media (max-width: 768px) {
-            .welcome-text h2 { font-size: 2.5rem; letter-spacing: 4px; }
-            .welcome-text h1 { font-size: 4rem; letter-spacing: 8px; }
-            .welcome-text p { font-size: 1.1rem; letter-spacing: 2px; }
-            .cta-button { padding: 20px 45px; font-size: 16px; bottom: 80px; }
             .visitor-badge {
-                bottom: 100px;
-                right: 10px;
-                padding: 10px 20px;
+                right: 50%;
+                transform: translateX(50%);
+            }
+            
+            #matrix-canvas.visible {
+                opacity: 0.1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-text h2 {
+                font-size: clamp(1.2rem, 5vw, 2rem);
+            }
+            
+            .welcome-text h1 {
+                font-size: clamp(2rem, 10vw, 4rem);
+            }
+            
+            .welcome-text p {
+                font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .welcome-text h2 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2.5rem;
+                margin-bottom: 15px;
+            }
+            
+            .welcome-text p {
+                font-size: 0.9rem;
+                margin-top: 10px;
+            }
+            
+            .cta-button {
+                bottom: 60px;
+                padding: 12px 30px;
                 font-size: 12px;
             }
-            .visitor-count { font-size: 14px; }
+            
+            .visitor-badge {
+                bottom: 30px;
+                padding: 8px 16px;
+                font-size: 10px;
+            }
+        }
+
+        /* Performance optimization for mobile */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Video Intro (arxos.mp4) -->
+    <!-- Video Intro -->
     <div class="video-intro-overlay" id="videoIntroOverlay">
-        <video id="introVideo" autoplay muted playsinline>
+        <video id="introVideo" autoplay muted playsinline preload="auto">
             <source src="arxos.mp4" type="video/mp4">
         </video>
+        <div class="mobile-intro" id="mobileIntro">
+            <h1>ARXOS<span class="cursor">_</span></h1>
+        </div>
     </div>
 
     <!-- Matrix Canvas -->
@@ -311,7 +397,7 @@
 
     <!-- Footer -->
     <div class="footer-text" id="footerText">
-        &copy; 2026 ARXOS | Created by oxbv1 | 0xb0rn3
+        © 2026 ARXOS | Created by oxbv1 | 0xb0rn3
     </div>
 
     <!-- Hidden tracking -->
@@ -320,12 +406,19 @@
     <script>
         const videoIntroOverlay = document.getElementById('videoIntroOverlay');
         const introVideo = document.getElementById('introVideo');
+        const mobileIntro = document.getElementById('mobileIntro');
         const matrixCanvas = document.getElementById('matrix-canvas');
         const welcomeContainer = document.getElementById('welcomeContainer');
         const enterButton = document.getElementById('enterButton');
         const footerText = document.getElementById('footerText');
 
+        let videoPlayed = false;
+        let introShown = false;
+
         function showWelcomeScreen() {
+            if (introShown) return;
+            introShown = true;
+            
             videoIntroOverlay.classList.add('fade-out');
             setTimeout(() => {
                 videoIntroOverlay.style.display = 'none';
@@ -337,19 +430,44 @@
             }, 800);
         }
 
+        // Handle video playback
+        introVideo.addEventListener('loadeddata', () => {
+            const promise = introVideo.play();
+            if (promise !== undefined) {
+                promise.then(() => {
+                    videoPlayed = true;
+                }).catch(() => {
+                    // Video autoplay failed (common on mobile)
+                    mobileIntro.classList.add('show');
+                    setTimeout(showWelcomeScreen, 2000);
+                });
+            }
+        });
+
         introVideo.addEventListener('ended', showWelcomeScreen);
-        introVideo.addEventListener('error', showWelcomeScreen);
+        introVideo.addEventListener('error', () => {
+            mobileIntro.classList.add('show');
+            setTimeout(showWelcomeScreen, 2000);
+        });
+
+        // Fallback timer
         setTimeout(showWelcomeScreen, 6000);
 
+        // Optimized matrix rain for mobile
         function startMatrixRain() {
             const ctx = matrixCanvas.getContext('2d');
             matrixCanvas.width = window.innerWidth;
             matrixCanvas.height = window.innerHeight;
 
+            // Reduce complexity on mobile
+            const isMobile = window.innerWidth <= 768;
             const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-            const fontSize = 14;
+            const fontSize = isMobile ? 12 : 14;
             const columns = matrixCanvas.width / fontSize;
             const drops = Array(Math.floor(columns)).fill(1);
+            
+            // Reduce frame rate on mobile
+            const frameDelay = isMobile ? 80 : 50;
 
             function draw() {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -365,10 +483,15 @@
                 }
             }
 
-            setInterval(draw, 50);
+            setInterval(draw, frameDelay);
+            
+            let resizeTimeout;
             window.addEventListener('resize', () => {
-                matrixCanvas.width = window.innerWidth;
-                matrixCanvas.height = window.innerHeight;
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    matrixCanvas.width = window.innerWidth;
+                    matrixCanvas.height = window.innerHeight;
+                }, 250);
             });
         }
 
@@ -378,8 +501,40 @@
             setTimeout(() => window.location.href = 'main.html', 800);
         });
 
-        // Obfuscated tracking
-        (function(){var _0x1=['ghTrack','getElementById','src','https://github.com/thearxos/arxos','https://api.github.com/repos/thearxos/arxos','then','json','watchers_count','textContent','toLocaleString','visitorBadge','classList','add','visible','visitorCount'];setTimeout(function(){try{document[_0x1[1]](_0x1[0])[_0x1[2]]=_0x1[3];fetch(_0x1[4])[_0x1[5]](function(r){return r[_0x1[6]]();})[_0x1[5]](function(d){var c=d[_0x1[7]]||0;var e=document[_0x1[1]](_0x1[14]);var b=document[_0x1[1]](_0x1[10]);if(e)e[_0x1[8]]=c[_0x1[9]]();if(b){b[_0x1[11]][_0x1[12]](_0x1[13]);}}).catch(function(){});}catch(e){}},1000);})();
+        // Optimized tracking
+        (function(){
+            var track = function() {
+                try {
+                    document.getElementById('ghTrack').src = 'https://github.com/thearxos/arxos';
+                    fetch('https://api.github.com/repos/thearxos/arxos')
+                        .then(r => r.json())
+                        .then(d => {
+                            var c = d.watchers_count || 0;
+                            var e = document.getElementById('visitorCount');
+                            var b = document.getElementById('visitorBadge');
+                            if(e) e.textContent = c.toLocaleString();
+                            if(b) b.classList.add('visible');
+                        })
+                        .catch(() => {
+                            var e = document.getElementById('visitorCount');
+                            var b = document.getElementById('visitorBadge');
+                            if(e) e.textContent = '---';
+                            if(b) b.classList.add('visible');
+                        });
+                } catch(e) {}
+            };
+            setTimeout(track, 1000);
+        })();
+
+        // Prevent zoom on double tap for better UX
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
