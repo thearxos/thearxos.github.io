@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
-    <title>ARXOS - Where Performance Meets Penetration Testing</title>
+    <title>Welcome to ARXOS</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -13,790 +15,371 @@
         }
 
         :root {
-            --primary: #ffffff;
-            --accent: #00ff41;
-            --bg-deep: #000000;
-            --bg-dark: #0a0a0a;
-            --bg-card: #111111;
-            --text-primary: #e0e0e0;
-            --text-muted: #666666;
-            --border: #1a1a1a;
+            --bg-hard: #000000;
+            --fg: #ffffff;
+            --accent-light: #cccccc;
+            --fg-dim: #a0a0a0;
+            --glow-grey: #888888;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
-            background: var(--bg-deep);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            line-height: 1.6;
+            background: #000000;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Video Intro Overlay - This plays for exactly 0.80 seconds then reveals the site */
-        #video-intro {
+        /* Video intro overlay */
+        .video-intro-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: #000000;
             z-index: 10000;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             opacity: 1;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.8s ease;
         }
 
-        #video-intro.fade-out {
+        .video-intro-overlay.fade-out {
             opacity: 0;
             pointer-events: none;
         }
 
-        #intro-video {
+        .video-intro-overlay video {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
 
-        /* Main content hidden until video completes */
-        #main-content {
+        /* Matrix canvas */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
             opacity: 0;
             transition: opacity 1s ease;
         }
 
-        #main-content.visible {
+        #matrix-canvas.visible {
+            opacity: 0.15;
+        }
+
+        /* Welcome container */
+        .welcome-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .welcome-container.visible {
             opacity: 1;
         }
 
-        /* Animated gradient background with subtle movement */
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: radial-gradient(ellipse at top, #0a0a0a 0%, #000000 100%);
-        }
-
-        /* Subtle grid overlay for depth */
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.03;
-            background-image: 
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: grid-scroll 20s linear infinite;
-        }
-
-        @keyframes grid-scroll {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        /* Navigation bar with glassmorphism effect */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 25px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        nav.scrolled {
-            padding: 15px 60px;
-            background: rgba(0, 0, 0, 0.95);
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .logo:hover {
-            color: var(--accent);
-            letter-spacing: 6px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 40px;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            position: relative;
-            text-transform: uppercase;
-        }
-
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            width: 0;
-            height: 1px;
-            background: var(--accent);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .nav-links a:hover::before {
-            width: 100%;
-        }
-
-        /* Hero section with floating animation */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 120px 20px 80px;
-            position: relative;
-        }
-
-        .hero-logo {
-            width: 320px;
-            max-width: 85%;
-            margin-bottom: 50px;
-            animation: float-smooth 8s ease-in-out infinite;
-            filter: drop-shadow(0 0 40px rgba(0, 255, 65, 0.15));
-            transition: all 0.5s ease;
-        }
-
-        .hero-logo:hover {
-            filter: drop-shadow(0 0 60px rgba(0, 255, 65, 0.3));
-            transform: scale(1.05);
-        }
-
-        @keyframes float-smooth {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            25% { transform: translateY(-15px) rotate(1deg); }
-            75% { transform: translateY(-15px) rotate(-1deg); }
-        }
-
-        .hero h1 {
-            font-size: 5rem;
+        .welcome-text h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
             font-weight: 900;
             margin-bottom: 25px;
-            color: var(--primary);
+            color: var(--fg);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
             letter-spacing: 8px;
-            animation: fade-in-up 1s ease both;
-            animation-delay: 0.2s;
+            animation: glow 3s ease-in-out infinite;
         }
 
-        @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 40px rgba(255, 255, 255, 0.4); }
+            50% { text-shadow: 0 0 60px rgba(255, 255, 255, 0.6), 0 0 80px rgba(255, 255, 255, 0.4); }
         }
 
-        .tagline {
-            font-size: 1.4rem;
-            color: var(--text-muted);
-            margin-bottom: 60px;
-            letter-spacing: 3px;
-            font-weight: 300;
-            animation: fade-in-up 1s ease both;
-            animation-delay: 0.4s;
+        .welcome-text h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--accent-light);
+            text-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
+            letter-spacing: 14px;
+            margin-bottom: 35px;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        /* Call to action buttons with modern hover effects */
-        .cta-buttons {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
-            animation: fade-in-up 1s ease both;
-            animation-delay: 0.6s;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
-        .btn {
-            padding: 18px 45px;
-            font-size: 14px;
-            font-weight: 600;
-            border: 2px solid var(--primary);
-            background: transparent;
-            color: var(--primary);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
+        .cursor {
             display: inline-block;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            animation: blink 1s infinite;
         }
 
-        .btn::before {
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .welcome-text p {
+            font-size: 1.4rem;
+            letter-spacing: 4px;
+            color: var(--glow-grey);
+            margin-top: 30px;
+        }
+
+        /* Enter button */
+        .cta-button {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            padding: 25px 60px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            border: 3px solid var(--accent-light);
+            background: transparent;
+            color: var(--accent-light);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 50px;
+            box-shadow: 0 0 30px rgba(224, 224, 224, 0.2);
+            opacity: 0;
+        }
+
+        .cta-button.visible {
+            opacity: 1;
+            animation: buttonFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes buttonFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .cta-button::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 0;
             height: 100%;
-            background: var(--primary);
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: -1;
-        }
-
-        .btn:hover::before {
-            width: 100%;
-        }
-
-        .btn:hover {
-            color: var(--bg-deep);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-secondary {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .btn-secondary::before {
-            background: var(--accent);
-        }
-
-        /* Features section with card grid */
-        .features {
-            padding: 120px 60px;
-            background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-dark) 100%);
-        }
-
-        .section-title {
-            font-size: 3.5rem;
-            text-align: center;
-            margin-bottom: 80px;
-            color: var(--primary);
-            font-weight: 800;
-            letter-spacing: 4px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Feature cards with sophisticated hover effects */
-        .feature-card {
-            background: var(--bg-card);
-            padding: 45px 35px;
-            border: 1px solid var(--border);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: translateX(100%);
-        }
-
-        .feature-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(0, 255, 65, 0.1);
-        }
-
-        .feature-icon {
-            font-size: 3.5rem;
-            margin-bottom: 25px;
-            display: inline-block;
-            transition: all 0.4s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .feature-card h3 {
-            font-size: 1.6rem;
-            margin-bottom: 18px;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-            line-height: 1.9;
-            font-size: 15px;
-        }
-
-        /* Statistics section with animated counters */
-        .stats {
-            padding: 120px 60px;
-            text-align: center;
-            background: var(--bg-deep);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 50px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .stat-item {
-            padding: 45px 30px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .stat-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
+            background: var(--accent-light);
             transition: width 0.4s ease;
+            z-index: -1;
+            border-radius: 50px;
         }
 
-        .stat-item:hover::after {
+        .cta-button:hover::before {
             width: 100%;
         }
 
-        .stat-item:hover {
-            border-color: var(--accent);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 255, 65, 0.1);
+        .cta-button:hover {
+            color: var(--bg-hard);
+            box-shadow: 0 20px 50px rgba(224, 224, 224, 0.5);
         }
 
-        .stat-number {
-            font-size: 4rem;
-            color: var(--accent);
-            font-weight: 900;
-            margin-bottom: 15px;
-            font-family: monospace;
+        .arrow {
+            display: inline-block;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
         }
 
-        .stat-label {
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 3px;
+        .cta-button:hover .arrow {
+            transform: translateX(10px);
+        }
+
+        /* Footer */
+        .footer-text {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 13px;
-            font-weight: 600;
-        }
-
-        /* Download and contact sections */
-        .contact {
-            padding: 120px 60px;
-            background: var(--bg-dark);
-            text-align: center;
-        }
-
-        .contact-info {
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 50px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            transition: all 0.4s ease;
-        }
-
-        .contact-info:hover {
-            border-color: var(--accent);
-            box-shadow: 0 20px 60px rgba(0, 255, 65, 0.08);
-        }
-
-        .contact-item {
-            margin: 30px 0;
-            font-size: 1.1rem;
-        }
-
-        .contact-item strong {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .contact-item a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-family: monospace;
-        }
-
-        .contact-item a:hover {
+            color: var(--fg-dim);
             letter-spacing: 2px;
-            color: var(--primary);
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1s ease;
         }
 
-        /* Footer styling */
-        footer {
-            padding: 40px;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            background: var(--bg-deep);
+        .footer-text.visible {
+            opacity: 1;
         }
 
-        .footer-links {
-            margin-top: 20px;
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: all 0.3s ease;
+        /* Visitor counter badge */
+        .visitor-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--accent-light);
+            padding: 15px 25px;
+            border-radius: 50px;
             font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--fg-dim);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: all 1s ease;
         }
 
-        .footer-links a:hover {
-            color: var(--accent);
+        .visitor-badge.visible {
+            opacity: 1;
         }
 
-        /* Responsive design for mobile devices */
+        .visitor-count {
+            color: var(--accent-light);
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            font-size: 16px;
+        }
+
+        /* Page transition */
+        body.page-transition {
+            animation: fadeOut 0.8s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 3rem;
-                letter-spacing: 4px;
-            }
-
-            .tagline {
-                font-size: 1.1rem;
-            }
-
-            nav {
-                padding: 20px 30px;
-            }
-
-            .nav-links {
-                gap: 20px;
+            .welcome-text h2 { font-size: 2.5rem; letter-spacing: 4px; }
+            .welcome-text h1 { font-size: 4rem; letter-spacing: 8px; }
+            .welcome-text p { font-size: 1.1rem; letter-spacing: 2px; }
+            .cta-button { padding: 20px 45px; font-size: 16px; bottom: 80px; }
+            .visitor-badge {
+                bottom: 100px;
+                right: 10px;
+                padding: 10px 20px;
                 font-size: 12px;
             }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-
-            .features, .stats, .contact {
-                padding: 80px 30px;
-            }
-
-            .features-grid, .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Scroll reveal animation */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+            .visitor-count { font-size: 14px; }
         }
     </style>
 </head>
 <body>
-    <!-- Video Intro - Plays for exactly 0.80 seconds -->
-    <div id="video-intro">
-        <video id="intro-video" autoplay muted playsinline>
+    <!-- Video Intro (arxos.mp4) -->
+    <div class="video-intro-overlay" id="videoIntroOverlay">
+        <video id="introVideo" autoplay muted playsinline>
             <source src="arxos.mp4" type="video/mp4">
         </video>
     </div>
 
-    <!-- Main content - Hidden until video completes -->
-    <div id="main-content">
-        <!-- Background elements -->
-        <div class="background"></div>
-        <div class="grid-overlay"></div>
+    <!-- Matrix Canvas -->
+    <canvas id="matrix-canvas"></canvas>
 
-        <!-- Navigation -->
-        <nav id="navbar">
-            <div class="logo">ARXOS</div>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#stats">Stats</a>
-                <a href="#download">Download</a>
-                <a href="#contact">Contact</a>
-            </div>
-        </nav>
-
-        <!-- Hero Section -->
-        <section class="hero">
-            <img src="ARXOS.png" alt="ARXOS Logo" class="hero-logo">
-            <h1>ARXOS</h1>
-            <p class="tagline">Where Performance Meets Penetration Testing</p>
-            <div class="cta-buttons">
-                <a href="#download" class="btn">Download ISO</a>
-                <a href="https://0xb0rn3.github.io" class="btn btn-secondary" target="_blank">Developer Portfolio</a>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features reveal" id="features">
-            <h2 class="section-title">Why ARXOS?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🔥</div>
-                    <h3>2800+ Security Tools</h3>
-                    <p>Complete BlackArch arsenal pre-installed. From reconnaissance to exploitation, everything you need for professional penetration testing at your fingertips.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Performance Optimized</h3>
-                    <p>CPU Governor included for maximum performance. Configured for speed, not bloat. Every resource dedicated to your security work.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>KDE Plasma Desktop</h3>
-                    <p>Beautiful, customizable, and powerful. Modern desktop environment tailored for professionals who demand both aesthetics and functionality.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Zero Bloat</h3>
-                    <p>Pure ArchBang base. No unnecessary packages. Only essential tools and 2800+ pentesting utilities. Your system, your way.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">💻</div>
-                    <h3>Custom ZSH Config</h3>
-                    <p>Optimized shell with aliases: 'update' for system updates, 'install' for packages, 'diskinfo' for storage. Efficiency at your fingertips.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Built for Hackers</h3>
-                    <p>Designed by hackers, for hackers. Perfect for bug bounties, penetration testing, security research, and ethical hacking.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Stats Section -->
-        <section class="stats reveal" id="stats">
-            <h2 class="section-title">By The Numbers</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">2800+</div>
-                    <div class="stat-label">Security Tools</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">0</div>
-                    <div class="stat-label">Bloatware</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Customizable</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">∞</div>
-                    <div class="stat-label">Possibilities</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Download Section -->
-        <section class="features reveal" id="download">
-            <h2 class="section-title">Get ARXOS</h2>
-            <div class="contact-info">
-                <p style="color: var(--text-muted); margin-bottom: 40px; line-height: 2; font-size: 16px;">
-                    Download ARXOS and unleash the full power of professional penetration testing. 
-                    Based on ArchBang with complete BlackArch integration.
-                </p>
-                <a href="#" class="btn" style="margin: 25px;">Download ISO</a>
-                <p style="color: var(--text-muted); margin-top: 40px; font-size: 13px;">
-                    SHA256 Checksum will be available with download
-                </p>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section class="contact reveal" id="contact">
-            <h2 class="section-title">Contact & Support</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <strong>Support Email</strong><br>
-                    <a href="mailto:contact.arxos@proton.me">contact.arxos@proton.me</a>
-                </div>
-                <div class="contact-item">
-                    <strong>Developer</strong><br>
-                    <a href="https://0xb0rn3.github.io" target="_blank">0xb0rn3.github.io</a>
-                </div>
-                <div class="contact-item">
-                    <strong>GitHub</strong><br>
-                    <a href="https://github.com/0xb0rn3" target="_blank">github.com/0xb0rn3</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer>
-            <p>&copy; 2026 ARXOS. Created by oxbv1 | 0xb0rn3</p>
-            <div class="footer-links">
-                <a href="#features">Features</a>
-                <a href="#download">Download</a>
-                <a href="#contact">Contact</a>
-                <a href="https://0xb0rn3.github.io" target="_blank">Portfolio</a>
-            </div>
-        </footer>
+    <!-- Visitor Badge -->
+    <div class="visitor-badge" id="visitorBadge">
+        👁️ Visitors: <span class="visitor-count" id="visitorCount">...</span>
     </div>
 
+    <!-- Welcome Container -->
+    <div class="welcome-container" id="welcomeContainer">
+        <div class="welcome-text">
+            <h2>WELCOME TO</h2>
+            <h1>ARXOS<span class="cursor">_</span></h1>
+            <p>Where Performance Meets Penetration Testing</p>
+        </div>
+    </div>
+
+    <!-- Enter Button -->
+    <a href="main.html" class="cta-button" id="enterButton">
+        Check Us Out <span class="arrow">→</span>
+    </a>
+
+    <!-- Footer -->
+    <div class="footer-text" id="footerText">
+        &copy; 2026 ARXOS | Created by oxbv1 | 0xb0rn3
+    </div>
+
+    <!-- Hidden tracking -->
+    <iframe id="ghTrack" style="display:none;width:0;height:0;border:0;"></iframe>
+
     <script>
-        // Video intro timing - exactly 0.60 seconds
-        const videoIntro = document.getElementById('video-intro');
-        const introVideo = document.getElementById('intro-video');
-        const mainContent = document.getElementById('main-content');
+        const videoIntroOverlay = document.getElementById('videoIntroOverlay');
+        const introVideo = document.getElementById('introVideo');
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const welcomeContainer = document.getElementById('welcomeContainer');
+        const enterButton = document.getElementById('enterButton');
+        const footerText = document.getElementById('footerText');
 
-        // Function to hide intro and show main content
-        function showMainContent() {
-            videoIntro.classList.add('fade-out');
+        function showWelcomeScreen() {
+            videoIntroOverlay.classList.add('fade-out');
             setTimeout(() => {
-                videoIntro.style.display = 'none';
-                mainContent.classList.add('visible');
-            }, 500);
+                videoIntroOverlay.style.display = 'none';
+                matrixCanvas.classList.add('visible');
+                welcomeContainer.classList.add('visible');
+                enterButton.classList.add('visible');
+                footerText.classList.add('visible');
+                startMatrixRain();
+            }, 800);
         }
 
-        // Hide video intro after exactly 0.60 seconds
-        setTimeout(showMainContent, 600);
+        introVideo.addEventListener('ended', showWelcomeScreen);
+        introVideo.addEventListener('error', showWelcomeScreen);
+        setTimeout(showWelcomeScreen, 6000);
 
-        // Also hide if video ends naturally (as fallback)
-        introVideo.addEventListener('ended', showMainContent);
+        function startMatrixRain() {
+            const ctx = matrixCanvas.getContext('2d');
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
 
-        // Skip on click (optional user interaction)
-        videoIntro.addEventListener('click', showMainContent);
+            const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+            const fontSize = 14;
+            const columns = matrixCanvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
 
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+                ctx.fillStyle = '#cccccc';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = matrix[Math.floor(Math.random() * matrix.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
                 }
-            });
-        });
-
-        // Navbar background on scroll
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
             }
-        });
 
-        // Scroll reveal animation for sections
-        const reveals = document.querySelectorAll('.reveal');
-        
-        function checkReveal() {
-            reveals.forEach(element => {
-                const windowHeight = window.innerHeight;
-                const elementTop = element.getBoundingClientRect().top;
-                const revealPoint = 100;
-                
-                if (elementTop < windowHeight - revealPoint) {
-                    element.classList.add('active');
-                }
+            setInterval(draw, 50);
+            window.addEventListener('resize', () => {
+                matrixCanvas.width = window.innerWidth;
+                matrixCanvas.height = window.innerHeight;
             });
         }
-        
-        window.addEventListener('scroll', checkReveal);
-        checkReveal(); // Check on load
 
-        // Animated number counter for stats
-        const observerOptions = {
-            threshold: 0.5
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const statNumber = entry.target.querySelector('.stat-number');
-                    const finalNumber = statNumber.textContent;
-                    
-                    // Only animate numeric values
-                    if (finalNumber !== '∞' && finalNumber !== '0') {
-                        const numericValue = parseInt(finalNumber.replace(/\D/g, ''));
-                        let current = 0;
-                        const increment = numericValue / 60;
-                        
-                        const timer = setInterval(() => {
-                            current += increment;
-                            if (current >= numericValue) {
-                                statNumber.textContent = finalNumber;
-                                clearInterval(timer);
-                            } else {
-                                statNumber.textContent = Math.floor(current) + '+';
-                            }
-                        }, 25);
-                    }
-                    
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.stat-item').forEach(item => {
-            observer.observe(item);
+        enterButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.classList.add('page-transition');
+            setTimeout(() => window.location.href = 'main.html', 800);
         });
+
+        // Obfuscated tracking
+        (function(){var _0x1=['ghTrack','getElementById','src','https://github.com/thearxos/arxos','https://api.github.com/repos/thearxos/arxos','then','json','watchers_count','textContent','toLocaleString','visitorBadge','classList','add','visible','visitorCount'];setTimeout(function(){try{document[_0x1[1]](_0x1[0])[_0x1[2]]=_0x1[3];fetch(_0x1[4])[_0x1[5]](function(r){return r[_0x1[6]]();})[_0x1[5]](function(d){var c=d[_0x1[7]]||0;var e=document[_0x1[1]](_0x1[14]);var b=document[_0x1[1]](_0x1[10]);if(e)e[_0x1[8]]=c[_0x1[9]]();if(b){b[_0x1[11]][_0x1[12]](_0x1[13]);}}).catch(function(){});}catch(e){}},1000);})();
     </script>
 </body>
 </html>
