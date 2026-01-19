@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
+    <title>ARXOS - Where Performance Meets Penetration Testing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-hard: #000000;
+            --bg-soft: #0a0a0a;
+            --bg-medium: #1a1a1a;
+            --bg-card: #151515;
+            --fg: #ffffff;
+            --fg-dim: #a0a0a0;
+            --accent-light: #cccccc;
+            --border: #2a2a2a;
+            --glow-grey: #888888;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-hard);
+            color: var(--fg);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Matrix Rain Background */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* Navigation bar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 15px 60px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            color: var(--fg);
+            letter-spacing: 6px;
+            transition: all 0.4s ease;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .logo:hover {
+            letter-spacing: 10px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--fg-dim);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-transform: uppercase;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent-light);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px var(--accent-light);
+        }
+
+        .nav-links a:hover {
+            color: var(--fg);
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        .request-features-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent-light), var(--glow-grey));
+            color: var(--bg-hard);
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .request-features-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hero section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 20px 80px;
+        }
+
+        .hero-logo {
+            width: 280px;
+            max-width: 85%;
+            margin-bottom: 50px;
+            animation: float-smooth 6s ease-in-out infinite;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 60px rgba(136, 136, 136, 0.5),
+                0 0 100px rgba(136, 136, 136, 0.3);
+            border: 4px solid var(--glow-grey);
+            transition: all 0.5s ease;
+        }
+
+        .hero-logo:hover {
+            box-shadow: 
+                0 0 80px rgba(255, 255, 255, 0.6),
+                0 0 120px rgba(255, 255, 255, 0.4);
+            transform: scale(1.08);
+            border-color: var(--accent-light);
+        }
+
+        @keyframes float-smooth {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero h1 {
+            font-size: 5.5rem;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            margin-bottom: 25px;
+            color: var(--fg);
+            letter-spacing: 12px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: var(--accent-light);
+            margin-bottom: 60px;
+            letter-spacing: 4px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 20px 50px;
+            font-size: 15px;
+            font-weight: 700;
+            border: 3px solid var(--accent-light);
+            background: transparent;
+            color: var(--accent-light);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(224, 224, 224, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--accent-light);
+            transition: width 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        .btn:hover {
+            color: var(--bg-hard);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(224, 224, 224, 0.4);
+        }
+
+        .btn-secondary {
+            border-color: var(--glow-grey);
+            color: var(--glow-grey);
+        }
+
+        .btn-secondary::before {
+            background: var(--glow-grey);
+        }
+
+        /* Features */
+        .features {
+            padding: 120px 60px;
+            background: var(--bg-soft);
+        }
+
+        .section-title {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 100px;
+            color: var(--fg);
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 6px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-medium) 100%);
+            padding: 50px 40px;
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-12px);
+            box-shadow: 0 25px 70px rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 30px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.7rem;
+            margin-bottom: 20px;
+            color: var(--accent-light);
+        }
+
+        .feature-card p {
+            color: var(--fg-dim);
+            line-height: 2;
+        }
+
+        /* Stats */
+        .stats {
+            padding: 120px 60px;
+            text-align: center;
+            background: var(--bg-hard);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 50px 35px;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            transition: all 0.5s ease;
+        }
+
+        .stat-item:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(224, 224, 224, 0.3);
+        }
+
+        .stat-number {
+            font-size: 4.5rem;
+            color: var(--accent-light);
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 30px rgba(224, 224, 224, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .stat-label {
+            color: var(--fg-dim);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* Contact */
+        .contact {
+            padding: 120px 60px;
+            background: var(--bg-soft);
+            text-align: center;
+        }
+
+        .contact-info {
+            max-width: 750px;
+            margin: 50px auto;
+            padding: 60px;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            transition: all 0.5s ease;
+        }
+
+        .contact-info:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 25px 70px rgba(224, 224, 224, 0.2);
+        }
+
+        .contact-item {
+            margin: 35px 0;
+            font-size: 1.1rem;
+        }
+
+        .contact-item strong {
+            color: var(--accent-light);
+            font-weight: 700;
+        }
+
+        .contact-item a {
+            color: var(--glow-grey);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            color: var(--accent-light);
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px;
+            text-align: center;
+            border-top: 2px solid var(--border);
+            color: var(--fg-dim);
+            background: var(--bg-hard);
+        }
+
+        .footer-links {
+            margin-top: 25px;
+            display: flex;
+            gap: 35px;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: var(--fg-dim);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-light);
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            margin: 8% auto;
+            padding: 60px;
+            border: 3px solid var(--accent-light);
+            border-radius: 30px;
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7), 0 0 100px rgba(224, 224, 224, 0.3);
+        }
+
+        .close {
+            color: var(--fg-dim);
+            float: right;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--accent-light);
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            color: var(--accent-light);
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            margin: 40px 0;
+            text-shadow: 0 0 40px rgba(224, 224, 224, 0.6);
+        }
+
+        .modal-message {
+            font-size: 1.2rem;
+            line-height: 2;
+            color: var(--fg);
+            margin: 30px 0;
+        }
+
+        .modal-signature {
+            font-style: italic;
+            color: var(--glow-grey);
+            margin-top: 40px;
+        }
+
+        .request-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .request-modal-content {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            margin: 10% auto;
+            padding: 60px;
+            border: 3px solid var(--accent-light);
+            border-radius: 30px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+        }
+
+        .request-option a {
+            display: block;
+            padding: 20px 40px;
+            margin: 15px auto;
+            max-width: 400px;
+            border: 2px solid var(--accent-light);
+            background: transparent;
+            color: var(--accent-light);
+            text-decoration: none;
+            border-radius: 25px;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
+        }
+
+        .request-option a:hover {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3.5rem; }
+            nav { padding: 20px 30px; flex-direction: column; gap: 20px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .features, .stats, .contact { padding: 80px 30px; }
+            .features-grid, .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Scroll reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .fade-up.active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+
+    <nav id="navbar">
+        <div class="logo">ARXOS</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#stats">Stats</a>
+            <a href="#download">Download</a>
+            <a href="#contact">Contact</a>
+            <button class="request-features-btn" onclick="openRequestModal()">Request Features</button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <img src="ARXOS.png" alt="ARXOS Logo" class="hero-logo">
+        <h1>ARXOS</h1>
+        <p class="tagline">Where Performance Meets Penetration Testing</p>
+        <div class="cta-buttons">
+            <a href="#" class="btn" onclick="event.preventDefault(); openModal();">Download ISO</a>
+            <a href="https://0xb0rn3.github.io" class="btn btn-secondary" target="_blank">Developer Portfolio</a>
+        </div>
+    </section>
+
+    <section class="features reveal" id="features">
+        <h2 class="section-title">Why ARXOS?</h2>
+        <div class="features-grid">
+            <div class="feature-card fade-up">
+                <div class="feature-icon">🔥</div>
+                <h3>2800+ Security Tools</h3>
+                <p>Complete BlackArch arsenal pre-installed. From reconnaissance to exploitation, everything you need for professional penetration testing.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">⚡</div>
+                <h3>Performance Optimized</h3>
+                <p>CPU Governor included for maximum performance. Configured for speed, not bloat.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">🎨</div>
+                <h3>KDE Plasma Desktop</h3>
+                <p>Beautiful, customizable, and powerful. Modern desktop environment tailored for professionals.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">🚀</div>
+                <h3>Zero Bloat</h3>
+                <p>Pure ArchBang base. No unnecessary packages. Only essential tools and 2800+ pentesting utilities.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">💻</div>
+                <h3>Custom ZSH Config</h3>
+                <p>Optimized shell with aliases: 'update' for system updates, 'install' for packages, 'diskinfo' for storage.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">🛡️</div>
+                <h3>Built for Hackers</h3>
+                <p>Designed by hackers, for hackers. Perfect for bug bounties, penetration testing, and security research.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats reveal" id="stats">
+        <h2 class="section-title">By The Numbers</h2>
+        <div class="stats-grid">
+            <div class="stat-item fade-up">
+                <div class="stat-number">2800+</div>
+                <div class="stat-label">Security Tools</div>
+            </div>
+            <div class="stat-item fade-up">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Open Source</div>
+            </div>
+            <div class="stat-item fade-up">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Bloatware</div>
+            </div>
+            <div class="stat-item fade-up">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Possibilities</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features reveal" id="download">
+        <h2 class="section-title">Get ARXOS</h2>
+        <div class="contact-info">
+            <p style="color: var(--fg-dim); margin-bottom: 40px; line-height: 2;">
+                Download ARXOS and unleash the full power of professional penetration testing.
+            </p>
+            <a href="#" class="btn" style="margin: 25px;" onclick="event.preventDefault(); openModal();">Download ISO</a>
+            <p style="color: var(--fg-dim); margin-top: 40px; font-size: 13px;">
+                SHA256 Checksum will be available with download
+            </p>
+        </div>
+    </section>
+
+    <section class="contact reveal" id="contact">
+        <h2 class="section-title">Contact & Support</h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <strong>Support Email</strong><br>
+                <a href="mailto:contact.arxos@proton.me">contact.arxos@proton.me</a>
+            </div>
+            <div class="contact-item">
+                <strong>Developer</strong><br>
+                <a href="https://0xb0rn3.github.io" target="_blank">0xb0rn3.github.io</a>
+            </div>
+            <div class="contact-item">
+                <strong>GitHub</strong><br>
+                <a href="https://github.com/thearxos" target="_blank">github.com/thearxos</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 ARXOS. Created by oxbv1 | 0xb0rn3</p>
+        <div class="footer-links">
+            <a href="#features">Features</a>
+            <a href="#download">Download</a>
+            <a href="#contact">Contact</a>
+            <a href="https://0xb0rn3.github.io" target="_blank">Portfolio</a>
+        </div>
+    </footer>
+
+    <!-- Download Timer Modal -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--accent-light); font-size: 2.5rem; margin-bottom: 30px; font-family: 'Orbitron', monospace;">Thank You!</h2>
+            <p class="modal-message">
+                Hey! Thank you for checking us out. Our first official release is currently under maintenance and will be available very soon. We appreciate your support and patience. The official ARXOS ISO image will be ready for download shortly.
+            </p>
+            <div class="timer-display" id="countdown"></div>
+            <p style="color: var(--fg-dim); margin-top: 20px;">Estimated time until release</p>
+            <p class="modal-signature">~ Yours truly, Senior Developer oxbv1 | 0xb0rn3</p>
+        </div>
+    </div>
+
+    <!-- Request Features Modal -->
+    <div id="requestModal" class="request-modal">
+        <div class="request-modal-content">
+            <span class="close" onclick="closeRequestModal()">&times;</span>
+            <h2 style="color: var(--accent-light); font-size: 2.5rem; margin-bottom: 40px; font-family: 'Orbitron', monospace;">Request a Feature</h2>
+            <p style="color: var(--fg-dim); margin-bottom: 40px;">Choose how you'd like to submit your feature request:</p>
+            <div class="request-option">
+                <a href="mailto:contact.arxos@proton.me?subject=Feature Request for ARXOS">📧 Request via Email</a>
+            </div>
+            <div class="request-option">
+                <a href="https://github.com/thearxos/issues" target="_blank">🐙 Request via GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        const fontSize = 14;
+        const drops = Array(Math.floor(canvas.width / fontSize)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#cccccc';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrix[Math.floor(Math.random() * matrix.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && !href.includes('event.preventDefault')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 100);
+        });
+
+        // Scroll reveal animations
+        const revealElements = document.querySelectorAll('.reveal, .fade-up');
+        
+        function checkScroll() {
+            const windowHeight = window.innerHeight;
+            const revealPoint = 100;
+            
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                
+                if (elementTop < windowHeight - revealPoint) {
+                    element.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkScroll);
+        checkScroll(); // Check on page load
+
+        // Staggered animation for cards
+        const fadeUpElements = document.querySelectorAll('.fade-up');
+        fadeUpElements.forEach((element, index) => {
+            element.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('downloadModal').style.display = 'block';
+            startCountdown();
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').style.display = 'none';
+        }
+
+        function openRequestModal() {
+            document.getElementById('requestModal').style.display = 'block';
+        }
+
+        function closeRequestModal() {
+            document.getElementById('requestModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const downloadModal = document.getElementById('downloadModal');
+            const requestModal = document.getElementById('requestModal');
+            if (event.target == downloadModal) closeModal();
+            if (event.target == requestModal) closeRequestModal();
+        }
+
+        // 24-hour countdown
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            const targetTime = new Date().getTime() + (24 * 60 * 60 * 1000);
+            
+            const timer = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = targetTime - now;
+                
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                countdownElement.innerHTML = 
+                    String(hours).padStart(2, '0') + ":" + 
+                    String(minutes).padStart(2, '0') + ":" + 
+                    String(seconds).padStart(2, '0');
+                
+                if (distance < 0) {
+                    clearInterval(timer);
+                    countdownElement.innerHTML = "00:00:00";
+                }
+            }, 1000);
+        }
+
+        window.addEventListener('load', () => {
+            // Page loaded successfully
+        });
+    </script>
+</body>
+</html>
