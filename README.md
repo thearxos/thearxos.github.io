@@ -1,4 +1,4 @@
-# <p align="center">🛡️ ArxOS v2026.1</p>
+# <p align="center">🛡️ ARXOS v2026.1 ~ Venus</p>
 
 <p align="center">
   <img src="ARXOS.png" alt="ArxOS Logo" width="300" />
