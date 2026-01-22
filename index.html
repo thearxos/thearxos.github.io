@@ -271,8 +271,8 @@
             border-radius: 50px;
             box-shadow: 0 0 30px rgba(224, 224, 224, 0.2);
             opacity: 0;
-            position: relative;
             overflow: hidden;
+            display: inline-block;
         }
 
         .cta-button.visible {
@@ -493,9 +493,9 @@
                 font-size: 12px;
             }
             .visitor-badge.visible {
-                animation: slideInUp 0.8s ease forwards;
+                animation: slideInUpMobile 0.8s ease forwards;
             }
-            @keyframes slideInUp {
+            @keyframes slideInUpMobile {
                 from {
                     opacity: 0;
                     transform: translateX(50%) translateY(50px);
@@ -577,7 +577,7 @@
 
     <!-- Enter Button -->
     <a href="main.html" class="cta-button" id="enterButton">
-        Check Us Out <span class="arrow">→</span>
+        Enter ARXOS <span class="arrow">→</span>
     </a>
 
     <!-- Footer -->
@@ -612,9 +612,12 @@
                 welcomeContainer.classList.add('visible');
                 
                 setTimeout(() => {
-                    enterButton.classList.add('visible');
-                    footerText.classList.add('visible');
-                    visitorBadge.classList.add('visible');
+                    if (enterButton) {
+                        enterButton.classList.add('visible');
+                        enterButton.style.display = 'block';
+                    }
+                    if (footerText) footerText.classList.add('visible');
+                    if (visitorBadge) visitorBadge.classList.add('visible');
                     createParticles();
                 }, 500);
                 
@@ -681,7 +684,7 @@
 
         // Enhanced visitor tracking with animation
         (function(){
-            var _0x1=['ghTrack','getElementById','src','https://github.com/thearxos/arxos','https://api.github.com/repos/thearxos/arxos','then','json','watchers_count','textContent','toLocaleString','visitorBadge','classList','add','visible','visitorCount'];
+            var _0x1=['ghTrack','getElementById','src','https://github.com/thearxos/thearxos.github.io','https://api.github.com/repos/thearxos/thearxos.github.io','then','json','watchers_count','textContent','toLocaleString','visitorBadge','classList','add','visible','visitorCount'];
             setTimeout(function(){
                 try{
                     document[_0x1[1]](_0x1[0])[_0x1[2]]=_0x1[3];
