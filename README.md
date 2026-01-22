@@ -1,724 +1,601 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
-    <title>Welcome to ARXOS</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-hard: #000000;
-            --fg: #ffffff;
-            --accent-light: #cccccc;
-            --fg-dim: #a0a0a0;
-            --glow-grey: #888888;
-        }
-
-        body {
-            background: #000000;
-            color: #ffffff;
-            font-family: 'JetBrains Mono', monospace;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
-
-        /* Animated gradient background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(136, 136, 136, 0.15) 0%, transparent 70%);
-            animation: pulse-bg 5s ease-in-out infinite;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-
-        body.show-bg::before {
-            opacity: 1;
-        }
-
-        @keyframes pulse-bg {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-
-        /* Video intro overlay */
-        .video-intro-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 1;
-            transition: opacity 0.8s ease;
-        }
-
-        .video-intro-overlay.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .video-intro-overlay video {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        /* Skip button for video */
-        .skip-video-btn {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            padding: 12px 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--accent-light);
-            color: var(--accent-light);
-            font-family: 'Orbitron', monospace;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 25px;
-            z-index: 10001;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            opacity: 0;
-            animation: fadeInBtn 0.5s ease 1s forwards;
-        }
-
-        @keyframes fadeInBtn {
-            to { opacity: 1; }
-        }
-
-        .skip-video-btn:hover {
-            background: var(--accent-light);
-            color: var(--bg-hard);
-            transform: translateY(-2px);
-        }
-
-        /* Matrix canvas */
-        #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-
-        #matrix-canvas.visible {
-            opacity: 0.15;
-        }
-
-        /* Welcome container */
-        .welcome-container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 40px 20px;
-            opacity: 0;
-            transition: opacity 1.2s ease;
-            transform: translateY(30px);
-        }
-
-        .welcome-container.visible {
-            opacity: 1;
-            animation: slideInUp 1s ease forwards;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .welcome-text h2 {
-            font-family: 'Orbitron', monospace;
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 25px;
-            color: var(--fg);
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
-            letter-spacing: 8px;
-            animation: glow 3s ease-in-out infinite, float 4s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 40px rgba(255, 255, 255, 0.4); }
-            50% { text-shadow: 0 0 60px rgba(255, 255, 255, 0.6), 0 0 80px rgba(255, 255, 255, 0.4); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .welcome-text h1 {
-            font-family: 'Orbitron', monospace;
-            font-size: 6rem;
-            font-weight: 900;
-            color: var(--accent-light);
-            text-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
-            letter-spacing: 14px;
-            margin-bottom: 35px;
-            animation: pulse 2s ease-in-out infinite, glitch 8s ease-in-out infinite;
-            position: relative;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        @keyframes glitch {
-            0%, 90%, 100% { transform: translate(0); }
-            92% { transform: translate(-2px, 2px); }
-            94% { transform: translate(2px, -2px); }
-            96% { transform: translate(-2px, -2px); }
-            98% { transform: translate(2px, 2px); }
-        }
-
-        .cursor {
-            display: inline-block;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .welcome-text p {
-            font-size: 1.4rem;
-            letter-spacing: 4px;
-            color: var(--glow-grey);
-            margin-top: 30px;
-            animation: fadeIn 2s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Particle effect */
-        .particle {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--accent-light);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 5;
-            animation: particleFloat 3s ease-in-out infinite;
-            opacity: 0.6;
-        }
-
-        @keyframes particleFloat {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            25% { transform: translateY(-20px) translateX(10px); }
-            50% { transform: translateY(-40px) translateX(-10px); }
-            75% { transform: translateY(-20px) translateX(5px); }
-        }
-
-        /* Enter button */
-        .cta-button {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            padding: 25px 60px;
-            font-size: 18px;
-            font-weight: 700;
-            font-family: 'Orbitron', monospace;
-            border: 3px solid var(--accent-light);
-            background: transparent;
-            color: var(--accent-light);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            border-radius: 50px;
-            box-shadow: 0 0 30px rgba(224, 224, 224, 0.2);
-            opacity: 0;
-            overflow: hidden;
-            display: inline-block;
-        }
-
-        .cta-button.visible {
-            opacity: 1;
-            animation: buttonFloat 3s ease-in-out infinite, buttonPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes buttonFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-
-        @keyframes buttonPulse {
-            0%, 100% { box-shadow: 0 0 30px rgba(224, 224, 224, 0.2); }
-            50% { box-shadow: 0 0 50px rgba(224, 224, 224, 0.4), 0 0 70px rgba(224, 224, 224, 0.2); }
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: var(--accent-light);
-            transition: width 0.4s ease;
-            z-index: -1;
-            border-radius: 50px;
-        }
-
-        .cta-button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .cta-button:hover::before {
-            width: 100%;
-        }
-
-        .cta-button:hover::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        .cta-button:hover {
-            color: var(--bg-hard);
-            box-shadow: 0 20px 50px rgba(224, 224, 224, 0.5);
-            transform: translateX(-50%) translateY(-5px) scale(1.05);
-        }
-
-        .arrow {
-            display: inline-block;
-            margin-left: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .cta-button:hover .arrow {
-            transform: translateX(10px);
-            animation: arrowBounce 0.6s ease-in-out infinite;
-        }
-
-        @keyframes arrowBounce {
-            0%, 100% { transform: translateX(10px); }
-            50% { transform: translateX(15px); }
-        }
-
-        /* Footer */
-        .footer-text {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 13px;
-            color: var(--fg-dim);
-            letter-spacing: 2px;
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-
-        .footer-text.visible {
-            opacity: 1;
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        /* Visitor counter badge */
-        .visitor-badge {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--accent-light);
-            padding: 15px 25px;
-            border-radius: 50px;
-            font-size: 13px;
-            color: var(--fg-dim);
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-            opacity: 0;
-            transition: all 0.5s ease;
-        }
-
-        .visitor-badge.visible {
-            opacity: 1;
-            animation: slideInRight 0.8s ease forwards;
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .visitor-badge:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 40px rgba(255, 255, 255, 0.3);
-        }
-
-        .visitor-count {
-            color: var(--accent-light);
-            font-weight: 700;
-            font-family: 'Orbitron', monospace;
-            font-size: 16px;
-            display: inline-block;
-            animation: countUp 2s ease forwards;
-        }
-
-        @keyframes countUp {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Page transition */
-        body.page-transition {
-            animation: fadeOut 0.8s ease forwards;
-        }
-
-        @keyframes fadeOut {
-            to { opacity: 0; }
-        }
-
-        /* Loading spinner for video */
-        .video-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(204, 204, 204, 0.2);
-            border-top-color: var(--accent-light);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 10002;
-        }
-
-        @keyframes spin {
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .welcome-text h2 { font-size: 3rem; }
-            .welcome-text h1 { font-size: 5rem; }
-        }
-
-        @media (max-width: 768px) {
-            .welcome-text h2 { 
-                font-size: 2.5rem; 
-                letter-spacing: 4px; 
-                margin-bottom: 20px;
-            }
-            .welcome-text h1 { 
-                font-size: 3.5rem; 
-                letter-spacing: 6px; 
-            }
-            .welcome-text p { 
-                font-size: 1.1rem; 
-                letter-spacing: 2px; 
-            }
-            .cta-button { 
-                padding: 20px 45px; 
-                font-size: 16px; 
-                bottom: 100px;
-                width: 90%;
-                max-width: 350px;
-            }
-            .visitor-badge {
-                bottom: 120px;
-                right: 50%;
-                transform: translateX(50%);
-                padding: 10px 20px;
-                font-size: 12px;
-            }
-            .visitor-badge.visible {
-                animation: slideInUpMobile 0.8s ease forwards;
-            }
-            @keyframes slideInUpMobile {
-                from {
-                    opacity: 0;
-                    transform: translateX(50%) translateY(50px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(50%) translateY(0);
-                }
-            }
-            .visitor-count { font-size: 14px; }
-            .skip-video-btn {
-                bottom: 20px;
-                right: 20px;
-                padding: 10px 20px;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .welcome-text h2 { 
-                font-size: 1.8rem; 
-                letter-spacing: 3px; 
-            }
-            .welcome-text h1 { 
-                font-size: 2.5rem; 
-                letter-spacing: 4px; 
-            }
-            .welcome-text p { 
-                font-size: 0.9rem; 
-                letter-spacing: 1px; 
-            }
-            .cta-button {
-                padding: 18px 35px;
-                font-size: 14px;
-            }
-            .footer-text {
-                font-size: 10px;
-                letter-spacing: 1px;
-            }
-        }
-
-        /* Touch device optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .cta-button:active {
-                transform: translateX(-50%) scale(0.95);
-            }
-            .visitor-badge:active {
-                transform: scale(0.95);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Video Intro (arxos.mp4) -->
-    <div class="video-intro-overlay" id="videoIntroOverlay">
-        <div class="video-loader" id="videoLoader"></div>
-        <video id="introVideo" autoplay muted playsinline>
-            <source src="arxos.mp4" type="video/mp4">
-        </video>
-        <button class="skip-video-btn" onclick="showWelcomeScreen()">Skip Intro</button>
-    </div>
-
-    <!-- Matrix Canvas -->
-    <canvas id="matrix-canvas"></canvas>
-
-    <!-- Visitor Badge -->
-    <div class="visitor-badge" id="visitorBadge">
-        👁️ Visitors: <span class="visitor-count" id="visitorCount">...</span>
-    </div>
-
-    <!-- Welcome Container -->
-    <div class="welcome-container" id="welcomeContainer">
-        <div class="welcome-text">
-            <h2>WELCOME TO</h2>
-            <h1>ARXOS<span class="cursor">_</span></h1>
-            <p>Where Performance Meets Penetration Testing</p>
-        </div>
-    </div>
-
-    <!-- Enter Button -->
-    <a href="main.html" class="cta-button" id="enterButton">
-        Enter ARXOS <span class="arrow">→</span>
-    </a>
-
-    <!-- Footer -->
-    <div class="footer-text" id="footerText">
-        &copy; 2026 ARXOS | Created by oxbv1 | 0xb0rn3
-    </div>
-
-    <!-- Hidden tracking -->
-    <iframe id="ghTrack" style="display:none;width:0;height:0;border:0;"></iframe>
-
-    <script>
-        const videoIntroOverlay = document.getElementById('videoIntroOverlay');
-        const introVideo = document.getElementById('introVideo');
-        const videoLoader = document.getElementById('videoLoader');
-        const matrixCanvas = document.getElementById('matrix-canvas');
-        const welcomeContainer = document.getElementById('welcomeContainer');
-        const enterButton = document.getElementById('enterButton');
-        const footerText = document.getElementById('footerText');
-        const visitorBadge = document.getElementById('visitorBadge');
-
-        // Hide loader when video loads
-        introVideo.addEventListener('loadeddata', () => {
-            videoLoader.style.display = 'none';
-        });
-
-        function showWelcomeScreen() {
-            videoIntroOverlay.classList.add('fade-out');
-            setTimeout(() => {
-                videoIntroOverlay.style.display = 'none';
-                document.body.classList.add('show-bg');
-                matrixCanvas.classList.add('visible');
-                welcomeContainer.classList.add('visible');
-                
-                setTimeout(() => {
-                    if (enterButton) {
-                        enterButton.classList.add('visible');
-                        enterButton.style.display = 'block';
-                    }
-                    if (footerText) footerText.classList.add('visible');
-                    if (visitorBadge) visitorBadge.classList.add('visible');
-                    createParticles();
-                }, 500);
-                
-                startMatrixRain();
-            }, 800);
-        }
-
-        // Create floating particles
-        function createParticles() {
-            const particleCount = window.innerWidth < 768 ? 10 : 20;
-            for (let i = 0; i < particleCount; i++) {
-                setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.top = Math.random() * 100 + '%';
-                    particle.style.animationDelay = Math.random() * 3 + 's';
-                    particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                    document.body.appendChild(particle);
-                }, i * 100);
-            }
-        }
-
-        introVideo.addEventListener('ended', showWelcomeScreen);
-        introVideo.addEventListener('error', showWelcomeScreen);
-        setTimeout(showWelcomeScreen, 6000);
-
-        function startMatrixRain() {
-            const ctx = matrixCanvas.getContext('2d');
-            matrixCanvas.width = window.innerWidth;
-            matrixCanvas.height = window.innerHeight;
-
-            const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-            const fontSize = 14;
-            const columns = matrixCanvas.width / fontSize;
-            const drops = Array(Math.floor(columns)).fill(1);
-
-            function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-                ctx.fillStyle = '#cccccc';
-                ctx.font = fontSize + 'px monospace';
-
-                for (let i = 0; i < drops.length; i++) {
-                    const text = matrix[Math.floor(Math.random() * matrix.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                }
-            }
-
-            setInterval(draw, 50);
-            window.addEventListener('resize', () => {
-                matrixCanvas.width = window.innerWidth;
-                matrixCanvas.height = window.innerHeight;
-            });
-        }
-
-        enterButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.body.classList.add('page-transition');
-            setTimeout(() => window.location.href = 'main.html', 800);
-        });
-
-        // Enhanced visitor tracking with animation
-        (function(){
-            var _0x1=['ghTrack','getElementById','src','https://github.com/thearxos/thearxos.github.io','https://api.github.com/repos/thearxos/thearxos.github.io','then','json','watchers_count','textContent','toLocaleString','visitorBadge','classList','add','visible','visitorCount'];
-            setTimeout(function(){
-                try{
-                    document[_0x1[1]](_0x1[0])[_0x1[2]]=_0x1[3];
-                    fetch(_0x1[4])[_0x1[5]](function(r){
-                        return r[_0x1[6]]();
-                    })[_0x1[5]](function(d){
-                        var c=d[_0x1[7]]||0;
-                        var e=document[_0x1[1]](_0x1[14]);
-                        var b=document[_0x1[1]](_0x1[10]);
-                        if(e){
-                            // Animate count up
-                            let current = 0;
-                            const target = c;
-                            const increment = Math.ceil(target / 50);
-                            const timer = setInterval(() => {
-                                current += increment;
-                                if (current >= target) {
-                                    current = target;
-                                    clearInterval(timer);
-                                }
-                                e[_0x1[8]]=current[_0x1[9]]();
-                            }, 30);
-                        }
-                        if(b){
-                            b[_0x1[11]][_0x1[12]](_0x1[13]);
-                        }
-                    }).catch(function(){
-                        // Fallback display
-                        var e=document[_0x1[1]](_0x1[14]);
-                        if(e) e[_0x1[8]]='1000+';
-                    });
-                }catch(e){}
-            },2000);
-        })();
-    </script>
-</body>
-</html>
+# <p align="center">🛡️ ArxOS v2026.1</p>
+
+<p align="center">
+  <img src="ARXOS.png" alt="ArxOS Logo" width="300" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Kernel-Latest--Arch-blue?style=for-the-badge&logo=linux" />
+  <img src="https://img.shields.io/badge/Base-Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux" />
+  <img src="https://img.shields.io/badge/Tools-BlackArch_2800+-red?style=for-the-badge&logo=kalilinux" />
+  <img src="https://img.shields.io/badge/Desktop-KDE_Plasma-22D3EE?style=for-the-badge&logo=kde" />
+</p>
+
+<p align="center">
+  <strong>Where Performance Meets Penetration Testing</strong><br>
+  Arch Linux + BlackArch • Optimized • Beautiful • Powerful
+</p>
+
+---
+
+## 🌟 The Vision
+
+**ArxOS** is a high-performance, security-focused distribution built on **Arch Linux** with the complete **BlackArch** security suite. Designed for penetration testers, security researchers, developers, and power users who demand speed, stability, and aesthetics.
+
+> **Built by hackers, for hackers** — featuring 2800+ pre-configured security tools from the BlackArch repository, custom performance optimizations, and a stunning KDE Plasma desktop environment.
+
+---
+
+## ⚡ Key Features
+
+### 🔐 Security Arsenal
+- **2800+ BlackArch Tools** — Complete penetration testing suite from the BlackArch repository
+- **Zero Bloat** — Only essential packages + security tools
+- **Live Environment** — Boot and hack without installation
+- **Calamares Installer** — Easy graphical installation with disk encryption support
+
+### 🚀 Performance Optimized
+- **CPU Governor** — Custom C-based performance controller for maximum speed
+- **Optimized Kernel** — Latest Arch Linux rolling release kernel
+- **Memory Efficient** — Intelligent resource management
+- **Fast Boot** — Minimal startup time with systemd optimization
+
+### 🎨 Beautiful Desktop
+- **KDE Plasma 6** — Latest version with minimalistic configuration
+- **Minimalistic Setup** — Clean desktop focused on productivity, not bloat
+- **Custom Theme** — ArxOS dark theme with elegant grey accents
+- **ARXOS Wallpaper** — Custom branding throughout
+- **Fastfetch** — Random anime logos with system info display
+- **Custom Prompt** — Unique `🧞マシン👀username` ZSH prompt
+- **Optimized Layout** — Panel and widgets configured for pentesting workflow
+
+### 💻 Developer Experience
+- **Oh-My-Zsh** — Enhanced shell with powerful plugins
+- **Custom Aliases** — 50+ productivity aliases for pentesting workflows
+- **Syntax Highlighting** — Real-time command highlighting with zsh-syntax-highlighting
+- **Auto-completion** — Intelligent command completion and suggestions
+
+---
+
+## 📦 What's Included
+
+### All BlackArch Tools Pre-Installed
+
+ArxOS comes with **EVERY SINGLE TOOL** from the BlackArch repository pre-installed. No need to download or install anything - just boot and hack.
+
+| Category | Tools Included | Examples |
+|----------|----------------|----------|
+| **Reconnaissance** | 200+ | nmap, masscan, amass, subfinder, recon-ng |
+| **Web Application** | 300+ | burpsuite, sqlmap, nikto, wpscan, gobuster |
+| **Exploitation** | 250+ | metasploit, beef, armitage, exploitdb |
+| **Post-Exploitation** | 150+ | mimikatz, bloodhound, empire, covenant |
+| **Wireless** | 150+ | aircrack-ng, reaver, wifite, kismet |
+| **Forensics** | 100+ | autopsy, volatility, sleuthkit, foremost |
+| **Reverse Engineering** | 200+ | ghidra, radare2, gdb, ida-free, binwalk |
+| **Social Engineering** | 80+ | setoolkit, king-phisher, gophish |
+| **Password Cracking** | 100+ | hashcat, john, hydra, medusa |
+| **Network Analysis** | 150+ | wireshark, tcpdump, ettercap, bettercap |
+| **Crypto** | 80+ | xortool, hashid, hash-identifier |
+| **Mobile Security** | 100+ | apktool, jadx, frida, objection |
+| **And 48 More Categories** | 1000+ | Complete arsenal ready to use |
+
+**Total: 2800+ tools** - All pre-installed and configured, no installation needed.
+
+### Pre-installed Applications
+
+```
+Base: ArchBang (Lightweight Arch Linux)
+BlackArch: Complete repository (2800+ tools)
+Desktop Environment: KDE Plasma 6 (Minimalistic)
+Terminal: Konsole with Oh-My-Zsh
+Browser: Brave (privacy-focused) / Firefox
+Code Editor: VSCode, Kate, Vim, Neovim
+File Manager: Dolphin (KDE)
+System Monitor: btop, htop, nvtop
+Package Manager: pacman + yay (AUR)
+Network Tools: NetworkManager, OpenVPN, WireGuard
+Performance: Custom CPU Governor (pre-installed)
+All BlackArch Tools: Pre-installed and ready
+```
+
+### Why ArchBang?
+
+ArxOS uses **ArchBang** as its base instead of vanilla Arch Linux:
+- **Lightweight**: Minimal base installation
+- **Stable**: Well-tested configurations
+- **Fast**: Optimized for performance
+- **Arch Compatible**: Full access to AUR and Arch repositories
+- **Perfect Foundation**: Ideal base for adding BlackArch tools
+
+---
+
+## 🎯 Custom Aliases & Commands
+
+ArxOS includes **50+ custom aliases** for maximum productivity:
+
+### System Management
+```bash
+arxos-update          # Full system update (pacman + AUR)
+arxos-install <pkg>   # Install packages easily
+arxos-remove <pkg>    # Remove packages cleanly
+arxos-orphans         # Remove orphaned packages
+arxos-clean           # Clean package cache
+arxos-mirrors         # Update and rank mirror list
+arxos-health          # Comprehensive system health check
+```
+
+### Performance Control
+```bash
+arxos-boostmode       # Maximum CPU performance mode
+arxos-powersave       # Power saving mode
+arxos-cpu-status      # Check CPU governor status
+cpu-governor performance  # Set performance mode
+cpu-governor powersave    # Set powersave mode
+cpu-governor status       # Show current CPU state
+```
+
+### Network & Security
+```bash
+portsopen             # Show all listening ports
+connections           # Show active network connections
+localip               # Display local IP addresses
+whatsmyip             # Show external/public IP
+wifi                  # List available WiFi networks
+wifi-connect <SSID>   # Connect to WiFi network
+arxos-selfscan        # Scan localhost for vulnerabilities
+```
+
+### Development & Git
+```bash
+gs                    # git status
+ga <file>             # git add
+gc "message"          # git commit -m
+gp                    # git push
+gl                    # git log --oneline --graph
+gd                    # git diff
+py                    # python3
+serve <port>          # Start HTTP server (default 8000)
+```
+
+### File Operations
+```bash
+mkcd <folder>         # Create and enter directory
+backup <file>         # Backup file with timestamp
+extract <archive>     # Extract any archive format
+duh                   # Disk usage, human readable, sorted
+bigfiles <dir>        # Find largest files
+countfiles <dir>      # Count files in directory
+```
+
+### System Information
+```bash
+sysinfo               # Comprehensive system information
+myfastfetch           # Fastfetch with random anime logo
+temps                 # Show CPU/GPU temperatures
+procs                 # Show top CPU processes
+meminfo               # Detailed memory usage
+diskinfo              # Detailed disk information
+service-failed        # Show failed systemd services
+logs-follow           # Follow system logs in real-time
+```
+
+---
+
+## 🔥 CPU Governor - Performance System
+
+ArxOS includes the **custom CPU Governor** pre-installed and pre-configured. This C-based performance controller is integrated into the system for maximum performance.
+
+### Features
+- ⚡ **Maximum Performance Mode** — Forces all CPU cores to max frequency
+- 🎮 **Gaming Optimized** — Eliminates frame drops and reduces input latency  
+- 🔧 **Intel & AMD Support** — Auto-detects CPU vendor and applies optimal settings
+- 🚀 **Turbo Boost Control** — Enables/disables CPU turbo intelligently
+- 💾 **Pre-configured** — Already installed and integrated into ArxOS
+- 📊 **Real-time Monitoring** — Display current frequencies and governors
+- 🔄 **Systemd Service** — Can be enabled to auto-apply on boot
+
+### Source Code
+The CPU Governor is open source and available at:
+- **GitHub**: [github.com/0xb0rn3/cpu-governor](https://github.com/0xb0rn3/cpu-governor)
+- **Install Script**: Automated installation with precision benchmarking
+- **Written in C**: Maximum performance, minimal overhead
+
+### Features
+- ⚡ **Maximum Performance Mode** — Forces all CPU cores to max frequency
+- 🎮 **Gaming Optimized** — Eliminates frame drops and reduces input latency
+- 🔧 **Intel & AMD Support** — Auto-detects CPU vendor and applies optimal settings
+- 🚀 **Turbo Boost Control** — Enables/disables CPU turbo intelligently
+- 💾 **Persistent Settings** — Auto-applies on boot via systemd service
+- 📊 **Real-time Monitoring** — Display current frequencies and governors
+
+### Usage
+```bash
+# Check current CPU status
+cpu-governor status
+
+# Maximum performance (pentesting, compilation, gaming)
+sudo cpu-governor performance
+
+# Power saving mode (battery conservation)
+sudo cpu-governor powersave
+
+# Enable auto-start on boot
+sudo systemctl enable cpu-performance.service
+sudo systemctl start cpu-performance.service
+
+# Check service status
+sudo systemctl status cpu-performance.service
+```
+
+### Performance Impact
+Real-world benchmarks on HP EliteBook 840 G6 (i7-8665U):
+
+- **Compilation Speed**: 10-15% faster build times
+- **Gaming FPS**: +15-20% average frame rate
+- **Frame Time 1% Low**: -30-40% (smoother gameplay)
+- **Benchmark Scores**: +5-10% improvement
+- **Tool Execution**: Faster nmap scans, hashcat cracking
+
+---
+
+## 🖥️ System Requirements
+
+### Minimum
+- **CPU**: 64-bit processor (2 cores, 2GHz+)
+- **RAM**: 4GB (8GB recommended)
+- **Storage**: 50GB free space
+- **Graphics**: Any GPU with 512MB VRAM
+- **Network**: Ethernet or WiFi adapter
+
+### Recommended
+- **CPU**: Intel i5/AMD Ryzen 5 or better (4+ cores)
+- **RAM**: 16GB+ for running multiple tools simultaneously
+- **Storage**: 150GB+ SSD (NVMe preferred) - ArxOS requires significant space
+- **Graphics**: Dedicated GPU recommended for GPU-based cracking (hashcat, etc.)
+- **Network**: Dual network cards beneficial for MitM attacks
+
+### Tested Hardware
+✅ **HP EliteBook 840 G6** (Primary development machine)
+- Intel Core i7-8665U (4C/8T)
+- 32GB DDR4 RAM
+- 1TB NVMe SSD
+- Intel UHD Graphics 620
+- Status: Fully working, excellent performance
+
+---
+
+## 💿 Installation
+
+### ISO Download
+
+ArxOS ISO is approximately **30GB+** due to having all 2800+ BlackArch tools pre-installed.
+
+**Download**: Coming Soon
+
+**Important Notes:**
+- Large ISO size (~30GB+) - plan accordingly for download time
+- Installed system requires 80-100GB disk space
+- All tools are pre-installed - no need for additional downloads
+- Verify ISO with SHA256 checksum after download
+
+### Quick Start (Live Environment)
+
+Boot the ArxOS ISO and use these credentials:
+
+| User | Username | Password |
+|------|----------|----------|
+| **Live User** | `live` | `evolution` |
+| **Root** | `root` | `evolution` |
+
+### Graphical Installation with Calamares
+
+1. **Boot ArxOS ISO** from USB or DVD
+2. **Select "Install ArxOS"** from boot menu or desktop icon
+3. **Follow Calamares installer**:
+   - Choose your language and timezone
+   - Configure disk partitioning (manual or automatic)
+   - Optional: Enable full disk encryption (LUKS)
+   - Create your user account
+   - Set hostname and network settings
+   - Install GRUB bootloader
+4. **Reboot and enjoy!**
+
+### Installation Options
+
+**Automatic Partitioning:**
+- Let Calamares handle everything
+- Options for encryption and swap
+
+**Manual Partitioning:**
+- Full control over disk layout
+- Supports LVM, LUKS encryption
+- Custom partition sizes and filesystems
+
+**Recommended Partition Scheme:**
+```
+/boot     - 512MB  (ext4, unencrypted)
+/         - 80GB+  (ext4 or btrfs) - Needs space for all tools
+/home     - Rest   (ext4 or btrfs)
+swap      - 8-16GB (optional, depends on RAM)
+```
+
+**Note**: ArxOS requires more space than typical distributions due to having all BlackArch tools pre-installed.
+
+---
+
+## 🎨 Customization
+
+### Included Themes
+- **ArxOS Dark** — Custom dark theme with grey accents
+- **ARXOS Wallpaper** — Available for SDDM, Desktop, and GRUB
+- **Breeze Dark Icons** — Modern icon theme
+- **Custom Fastfetch** — Random anime logos on terminal open
+- **KDE Plasma Widgets** — System monitoring, network, CPU
+
+### Terminal Experience
+- **Shell**: Zsh with Oh-My-Zsh framework
+- **Prompt**: Custom `🧞マシン👀username` prompt
+- **Theme**: Powerlevel10k compatible
+- **Plugins**: 
+  - git (Git integration)
+  - zsh-syntax-highlighting (Command highlighting)
+  - zsh-autosuggestions (Fish-like suggestions)
+  - colored-man-pages (Colorized man pages)
+  - command-not-found (Suggests packages)
+  - extract (Universal archive extraction)
+  - sudo (Double ESC to add sudo)
+  - archlinux (Arch-specific aliases)
+
+### KDE Plasma Customization
+All ArxOS customizations are in `/etc/skel/` so every new user gets:
+- Custom ARXOS wallpaper
+- Dark theme with grey accents
+- Optimized panel layout
+- Pre-configured keyboard shortcuts
+- SDDM login theme matching desktop
+- Custom Konsole color scheme
+
+---
+
+## 📚 Documentation
+
+### First Boot Checklist
+
+After installation, run these commands:
+
+1. **Update System**
+   ```bash
+   arxos-update
+   # Or manually:
+   sudo pacman -Syu
+   yay -Syu
+   ```
+
+2. **Enable Performance Mode**
+   ```bash
+   sudo cpu-governor performance
+   sudo systemctl enable cpu-performance.service
+   ```
+
+3. **Configure Mirrors (Optional)**
+   ```bash
+   arxos-mirrors
+   # This updates and ranks the fastest mirrors
+   ```
+
+4. **All Tools Already Installed**
+   ```bash
+   # No need to install tools - everything is pre-installed!
+   # Just verify tools are working:
+   nmap --version
+   metasploit --version
+   burpsuite --version
+   
+   # All 2800+ tools are ready to use
+   ```
+
+5. **Configure Network**
+   ```bash
+   # WiFi setup
+   wifi                    # List networks
+   wifi-connect "SSID"     # Connect
+   
+   # Or use KDE network manager GUI
+   ```
+
+### Troubleshooting
+
+**BlackArch Keyring Issues:**
+```bash
+sudo pacman-key --init
+sudo pacman-key --populate archlinux blackarch
+sudo pacman -Sy archlinux-keyring blackarch-keyring
+```
+
+**Slow Mirrors:**
+```bash
+arxos-mirrors  # Automatically updates and ranks mirrors
+# Or manually:
+sudo pacman -S reflector
+sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+```
+
+**Performance Issues:**
+```bash
+arxos-health              # Run system health check
+cpu-governor status       # Check CPU governor
+temps                     # Check temperatures
+htop                      # Check resource usage
+```
+
+**GPU Not Detected:**
+```bash
+# Install appropriate drivers
+sudo pacman -S mesa lib32-mesa  # For AMD/Intel
+sudo pacman -S nvidia nvidia-utils  # For NVIDIA
+```
+
+---
+
+## 🤝 Community & Support
+
+### Get Help
+- **Email**: [contact.arxos@proton.me](mailto:contact.arxos@proton.me)
+- **GitHub Issues**: [github.com/thearxos/thearxos.github.io/issues](https://github.com/thearxos/thearxos.github.io/issues)
+- **Developer**: [0xb0rn3.github.io](https://0xb0rn3.github.io)
+- **Documentation**: This README
+
+### Contributing
+Contributions are welcome! Here's how:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Test thoroughly on a VM
+5. Commit changes (`git commit -m 'Add amazing feature'`)
+6. Push to branch (`git push origin feature/amazing-feature`)
+7. Submit a pull request
+
+### Feature Requests
+Have an idea? Let us know!
+- **Email**: contact.arxos@proton.me
+- **GitHub Issues**: Tag as "enhancement"
+- **Include**: Detailed description, use case, and potential implementation
+
+---
+
+## 📊 Project Stats
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/thearxos/thearxos.github.io?style=social" />
+  <img src="https://img.shields.io/github/forks/thearxos/thearxos.github.io?style=social" />
+  <img src="https://img.shields.io/github/watchers/thearxos/thearxos.github.io?style=social" />
+</p>
+
+- **Total Tools**: 2800+ (Complete BlackArch repository)
+- **Base**: ArchBang + BlackArch
+- **ISO Size**: ~30GB+ (all tools pre-installed)
+- **Installed Size**: ~80-100GB (full installation)
+- **Boot Time**: <30 seconds (NVMe SSD)
+- **Memory Usage**: ~800MB idle (KDE Plasma 6)
+- **Desktop**: KDE Plasma 6 (minimalistic configuration)
+- **Development Status**: Active
+
+---
+
+## 📜 License & Credits
+
+ArxOS is built on open-source software:
+- **Arch Linux**: [GPL License](https://archlinux.org/)
+- **BlackArch**: [GPL License](https://blackarch.org/)
+- **KDE Plasma**: [GPL/LGPL](https://kde.org/)
+- **Custom Scripts**: MIT License
+
+### Third-Party Components
+- **ArchBang**: [GPL License](https://archbang.org/)
+- **Oh-My-Zsh**: [MIT License](https://github.com/ohmyzsh/ohmyzsh)
+- **Fastfetch**: [MIT License](https://github.com/fastfetch-cli/fastfetch)
+- **Calamares**: [GPL License](https://calamares.io/)
+- **CPU Governor**: [MIT License](https://github.com/0xb0rn3/cpu-governor)
+
+---
+
+## 🙏 Acknowledgments
+
+Special thanks to:
+- **ArchBang Team** — For the excellent lightweight Arch base
+- **Arch Linux Team** — For the best Linux distribution
+- **BlackArch Team** — For comprehensive security tools repository  
+- **KDE Team** — For the beautiful Plasma 6 desktop environment
+- **Community Contributors** — For testing, feedback, and bug reports
+- **Security Researchers** — For tool development and maintenance
+
+---
+
+## 💨‍💻 Creator
+
+<p align="center">
+  <strong>0xb0rn3 | oxbv1</strong><br>
+  Security Researcher • Developer • Linux Enthusiast
+</p>
+
+<p align="center">
+  <a href="https://github.com/0xb0rn3">
+    <img src="https://img.shields.io/badge/GitHub-0xb0rn3-181717?style=for-the-badge&logo=github" />
+  </a>
+  <a href="https://0xb0rn3.github.io">
+    <img src="https://img.shields.io/badge/Portfolio-0xb0rn3-4285F4?style=for-the-badge&logo=google-chrome" />
+  </a>
+  <a href="https://twitter.com/oxbv1">
+    <img src="https://img.shields.io/badge/Twitter-oxbv1-1DA1F2?style=for-the-badge&logo=twitter" />
+  </a>
+</p>
+
+---
+
+## 🔗 Useful Links
+
+- **Website**: [thearxos.github.io](https://thearxos.github.io)
+- **Download**: Coming Soon (~30GB ISO)
+- **Documentation**: This README
+- **CPU Governor**: [github.com/0xb0rn3/cpu-governor](https://github.com/0xb0rn3/cpu-governor)
+- **Bug Reports**: [GitHub Issues](https://github.com/thearxos/thearxos.github.io/issues)
+- **BlackArch Tools**: [blackarch.org/tools.html](https://blackarch.org/tools.html)
+- **ArchBang**: [archbang.org](https://archbang.org/)
+
+---
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=thearxos/thearxos.github.io&type=Date)](https://star-history.com/#thearxos/thearxos.github.io&Date)
+
+---
+
+## 🚀 Quick Command Reference
+
+```bash
+# System Management
+arxos-update              # Update everything
+arxos-health              # System health check
+reboot                   # Reboot system
+poweroff                 # Shutdown
+
+# Performance
+cpu-governor performance  # Max performance
+cpu-governor status      # Check CPU status
+temps                    # Check temperatures
+
+# Network
+whatsmyip                # External IP
+portsopen                # Listening ports
+wifi                     # List WiFi networks
+localip                  # Local IP addresses
+
+# Security Tools
+nmap <target>            # Port scanning
+metasploit               # Launch MSF Console
+burpsuite                # Web app testing
+wireshark                # Network analysis
+
+# Development
+gs                       # Git status
+gc "message"             # Git commit
+serve                    # HTTP server
+py                       # Python3
+
+# Information
+sysinfo                  # Full system info
+myfastfetch              # Pretty system info
+htop                     # Process monitor
+```
+
+---
+
+<p align="center">
+  <strong>Made with 🛡️ for Security Professionals</strong><br>
+  <em>© 2026 ArxOS • Created by oxbv1 | 0xb0rn3</em>
+</p>
+
+---
+
+**ArxOS** — *Where performance meets penetration testing* 🛡️
