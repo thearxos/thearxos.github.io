@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArxOS Releases - Version History & Downloads</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-hard: #000000;
+            --bg-soft: #0a0a0a;
+            --bg-medium: #1a1a1a;
+            --bg-card: #151515;
+            --fg: #ffffff;
+            --fg-dim: #a0a0a0;
+            --accent-light: #cccccc;
+            --border: #2a2a2a;
+            --glow-grey: #888888;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-hard);
+            color: var(--fg);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 60px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            color: var(--fg);
+            letter-spacing: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--accent-light);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .back-btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid var(--accent-light);
+            color: var(--accent-light);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            padding: 140px 60px 80px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(136, 136, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            margin-bottom: 20px;
+            color: var(--fg);
+            letter-spacing: 8px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(255, 255, 255, 0.6); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--accent-light);
+            letter-spacing: 3px;
+            margin-bottom: 50px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px 100px;
+        }
+
+        .releases-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .releases-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, 
+                var(--accent-light) 0%, 
+                var(--glow-grey) 50%, 
+                transparent 100%);
+            transform: translateX(-50%);
+        }
+
+        .release-item {
+            margin-bottom: 60px;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .release-badge {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-light), var(--glow-grey));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            z-index: 10;
+        }
+
+        .release-card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-left: calc(50% + 60px);
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .release-card:hover {
+            border-color: var(--accent-light);
+            transform: translateX(10px);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.2);
+        }
+
+        .release-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .release-title {
+            flex: 1;
+        }
+
+        .release-title h2 {
+            font-size: 2.5rem;
+            font-family: 'Orbitron', monospace;
+            color: var(--accent-light);
+            margin-bottom: 10px;
+        }
+
+        .release-codename {
+            font-size: 1.5rem;
+            color: var(--glow-grey);
+            margin-bottom: 5px;
+        }
+
+        .release-date {
+            color: var(--fg-dim);
+            font-size: 0.9rem;
+        }
+
+        .release-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .badge-latest {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(76, 175, 80, 0.8); }
+        }
+
+        .badge-lts {
+            background: rgba(204, 204, 204, 0.2);
+            border: 1px solid var(--accent-light);
+            color: var(--accent-light);
+        }
+
+        .badge-stable {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            color: #2196F3;
+        }
+
+        .release-summary {
+            margin: 25px 0;
+            color: var(--fg-dim);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .release-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-light);
+            font-family: 'Orbitron', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--fg-dim);
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .release-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            border: 2px solid;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            border-color: var(--accent-light);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-light);
+            border-color: var(--accent-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            transform: translateY(-2px);
+        }
+
+        .release-details {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .release-details.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .details-content {
+            background: var(--bg-hard);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-light);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .details-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .details-content::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        .details-content::-webkit-scrollbar-thumb {
+            background: var(--accent-light);
+            border-radius: 5px;
+        }
+
+        .details-content h1,
+        .details-content h2,
+        .details-content h3 {
+            color: var(--accent-light);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .details-content code {
+            background: var(--bg-card);
+            padding: 3px 8px;
+            border-radius: 5px;
+            color: var(--glow-grey);
+            font-size: 0.9em;
+        }
+
+        .details-content pre {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent-light);
+            margin: 15px 0;
+        }
+
+        .details-content ul,
+        .details-content ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .details-content li {
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: var(--fg-dim);
+            font-size: 1.2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .no-releases {
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--fg-dim);
+        }
+
+        .no-releases h2 {
+            font-size: 2rem;
+            color: var(--accent-light);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .hero {
+                padding: 120px 20px 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 0 20px 60px;
+            }
+
+            .releases-timeline::before {
+                left: 30px;
+            }
+
+            .release-badge {
+                left: 30px;
+                transform: translateX(-50%);
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .release-card {
+                margin-left: 80px;
+            }
+
+            .release-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .release-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .release-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .details-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+
+    <nav>
+        <a href="main.html" class="logo">ARXOS</a>
+        <a href="main.html" class="back-btn">← Back to Main</a>
+    </nav>
+
+    <section class="hero">
+        <h1>🚀 Releases</h1>
+        <p>Version History & Downloads</p>
+    </section>
+
+    <div class="container">
+        <div class="releases-timeline" id="releasesTimeline">
+            <div class="loading">Loading releases...</div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        const fontSize = 14;
+        const drops = Array(Math.floor(canvas.width / fontSize)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#cccccc';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrix[Math.floor(Math.random() * matrix.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Release definitions with version numbers for sorting
+        const releases = [
+            {
+                version: '2026.1',
+                versionNum: 2026.1,
+                codename: 'Venus',
+                icon: '🪐',
+                date: 'January 2026',
+                type: 'Rolling LTS',
+                isLatest: true,
+                summary: 'First official release of ArxOS. Complete security arsenal with 2800+ BlackArch tools, KDE Plasma 6, and custom CPU Governor for maximum performance.',
+                stats: {
+                    tools: '2800+',
+                    size: '~30GB',
+                    kernel: 'Latest',
+                    desktop: 'Plasma 6'
+                },
+                readmeFile: 'venus.md'
+            }
+            // Future releases will be added here and automatically sorted
+            // {
+            //     version: '2026.2',
+            //     versionNum: 2026.2,
+            //     codename: 'Mars',
+            //     icon: '🔴',
+            //     ...
+            // }
+        ];
+
+        // Sort releases by version number (highest first)
+        releases.sort((a, b) => b.versionNum - a.versionNum);
+
+        // Toggle release details
+        function toggleDetails(index) {
+            const details = document.getElementById(`details-${index}`);
+            if (details.classList.contains('active')) {
+                details.classList.remove('active');
+            } else {
+                // Close all other details
+                document.querySelectorAll('.release-details').forEach(d => d.classList.remove('active'));
+                details.classList.add('active');
+                
+                // Load README if not already loaded
+                if (!details.dataset.loaded) {
+                    loadReleaseReadme(releases[index], index);
+                    details.dataset.loaded = 'true';
+                }
+            }
+        }
+
+        // Load release README from GitHub
+        async function loadReleaseReadme(release, index) {
+            const contentDiv = document.getElementById(`readme-content-${index}`);
+            
+            try {
+                const response = await fetch(`https://raw.githubusercontent.com/thearxos/releases/main/${release.readmeFile}`);
+                
+                if (!response.ok) throw new Error('Failed to load');
+                
+                const markdown = await response.text();
+                
+                // Simple markdown to HTML conversion
+                let html = markdown
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+                    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+                    .replace(/`([^`]+)`/gim, '<code>$1</code>')
+                    .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2" target="_blank">$1</a>')
+                    .replace(/^- (.*$)/gim, '<li>$1</li>')
+                    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                    .replace(/\n/gim, '<br>');
+                
+                contentDiv.innerHTML = html;
+            } catch (error) {
+                contentDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="color: var(--fg-dim); margin-bottom: 20px;">
+                            Could not load release documentation.
+                        </p>
+                        <a href="https://github.com/thearxos/releases" 
+                           target="_blank" 
+                           class="btn btn-secondary">
+                            View on GitHub
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Render releases
+        function renderReleases() {
+            const timeline = document.getElementById('releasesTimeline');
+            
+            if (releases.length === 0) {
+                timeline.innerHTML = `
+                    <div class="no-releases">
+                        <h2>No Releases Yet</h2>
+                        <p>Check back soon for ArxOS releases!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            timeline.innerHTML = releases.map((release, index) => `
+                <div class="release-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="release-badge">${release.icon}</div>
+                    <div class="release-card" onclick="toggleDetails(${index})">
+                        <div class="release-header">
+                            <div class="release-title">
+                                <h2>v${release.version}</h2>
+                                <div class="release-codename">~ ${release.codename}</div>
+                                <div class="release-date">${release.date}</div>
+                            </div>
+                            <div class="release-badges">
+                                ${release.isLatest ? '<span class="badge badge-latest">Latest</span>' : ''}
+                                <span class="badge badge-lts">${release.type}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="release-summary">
+                            ${release.summary}
+                        </div>
+                        
+                        <div class="release-stats">
+                            ${Object.entries(release.stats).map(([key, value]) => `
+                                <div class="stat">
+                                    <div class="stat-number">${value}</div>
+                                    <div class="stat-label">${key}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="release-actions">
+                            <a href="#" class="btn btn-primary" onclick="event.stopPropagation(); alert('Download coming soon!');">
+                                Download ISO
+                            </a>
+                            <a href="https://github.com/thearxos/releases/blob/main/${release.readmeFile}" 
+                               target="_blank" 
+                               class="btn btn-secondary"
+                               onclick="event.stopPropagation();">
+                                View on GitHub
+                            </a>
+                        </div>
+                        
+                        <div class="release-details" id="details-${index}">
+                            <div class="details-content" id="readme-content-${index}">
+                                <div class="loading">Loading release notes...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        window.addEventListener('load', renderReleases);
+    </script>
+</body>
+</html>
