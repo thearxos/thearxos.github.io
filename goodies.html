@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArxOS Goodies & Scripts - Custom Tools & Aliases</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-hard: #000000;
+            --bg-soft: #0a0a0a;
+            --bg-medium: #1a1a1a;
+            --bg-card: #151515;
+            --fg: #ffffff;
+            --fg-dim: #a0a0a0;
+            --accent-light: #cccccc;
+            --border: #2a2a2a;
+            --glow-grey: #888888;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-hard);
+            color: var(--fg);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Matrix Background */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 60px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            color: var(--fg);
+            letter-spacing: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--accent-light);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .back-btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid var(--accent-light);
+            color: var(--accent-light);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 60px 80px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(136, 136, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            margin-bottom: 20px;
+            color: var(--fg);
+            letter-spacing: 8px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(255, 255, 255, 0.6); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--accent-light);
+            letter-spacing: 3px;
+            margin-bottom: 50px;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--fg-dim);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-light);
+            color: var(--accent-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            border-color: var(--accent-light);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Content Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px 100px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scripts Section */
+        .readme-container {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .readme-container:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 25px 70px rgba(255, 255, 255, 0.2);
+        }
+
+        .readme-header {
+            padding: 30px 40px;
+            background: var(--bg-medium);
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .readme-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .readme-icon {
+            font-size: 2rem;
+        }
+
+        .readme-title h3 {
+            font-family: 'Orbitron', monospace;
+            color: var(--accent-light);
+            font-size: 1.5rem;
+        }
+
+        .readme-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .readme-btn {
+            padding: 12px 25px;
+            background: transparent;
+            border: 2px solid var(--accent-light);
+            color: var(--accent-light);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .readme-btn:hover {
+            background: var(--accent-light);
+            color: var(--bg-hard);
+            transform: translateY(-2px);
+        }
+
+        .readme-content {
+            padding: 50px;
+            max-height: 800px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.8;
+            color: var(--fg);
+        }
+
+        .readme-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .readme-content::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        .readme-content::-webkit-scrollbar-thumb {
+            background: var(--accent-light);
+            border-radius: 5px;
+        }
+
+        .readme-content h1, .readme-content h2, .readme-content h3 {
+            color: var(--accent-light);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .readme-content code {
+            background: var(--bg-card);
+            padding: 3px 8px;
+            border-radius: 5px;
+            color: var(--glow-grey);
+            font-size: 0.9em;
+        }
+
+        .readme-content pre {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent-light);
+        }
+
+        /* Aliases Section */
+        .aliases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        .alias-card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alias-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(204, 204, 204, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .alias-card:hover::before {
+            opacity: 1;
+            animation: rotate-gradient 3s linear infinite;
+        }
+
+        @keyframes rotate-gradient {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .alias-card:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.15);
+        }
+
+        .alias-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .alias-icon {
+            font-size: 2rem;
+            min-width: 40px;
+        }
+
+        .alias-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-light);
+            font-family: 'Orbitron', monospace;
+            word-break: break-word;
+        }
+
+        .alias-command {
+            background: var(--bg-hard);
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-light);
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--glow-grey);
+            font-size: 0.9rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .alias-command::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .alias-command::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        .alias-command::-webkit-scrollbar-thumb {
+            background: var(--accent-light);
+            border-radius: 3px;
+        }
+
+        .alias-description {
+            color: var(--fg-dim);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .alias-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(204, 204, 204, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            font-size: 0.75rem;
+            color: var(--accent-light);
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: var(--fg-dim);
+            font-size: 1.2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Search Box */
+        .search-container {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 20px 25px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            color: var(--fg);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-light);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .search-box::placeholder {
+            color: var(--fg-dim);
+        }
+
+        /* Stats */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+        }
+
+        .stat-item:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent-light);
+            font-family: 'Orbitron', monospace;
+        }
+
+        .stat-label {
+            color: var(--fg-dim);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .hero {
+                padding: 120px 20px 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 0 20px 60px;
+            }
+
+            .tab-nav {
+                gap: 10px;
+            }
+
+            .tab-btn {
+                padding: 12px 25px;
+                font-size: 12px;
+            }
+
+            .aliases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .readme-header {
+                flex-direction: column;
+                padding: 25px 20px;
+            }
+
+            .readme-content {
+                padding: 30px 20px;
+            }
+
+            .stats-bar {
+                gap: 20px;
+            }
+
+            .stat-item {
+                padding: 15px 25px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+
+    <nav>
+        <a href="main.html" class="logo">ARXOS</a>
+        <a href="main.html" class="back-btn">← Back to Main</a>
+    </nav>
+
+    <section class="hero">
+        <h1>🛠️ Goodies & Scripts</h1>
+        <p>Custom Tools, Aliases & Productivity Enhancers</p>
+        
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('scripts')">📜 Scripts & Tools</button>
+            <button class="tab-btn" onclick="switchTab('aliases')">⚡ Custom Aliases</button>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Scripts Tab -->
+        <div id="scripts-tab" class="tab-content active">
+            <div class="readme-container">
+                <div class="readme-header">
+                    <div class="readme-title">
+                        <span class="readme-icon">📄</span>
+                        <h3>Scripts Documentation</h3>
+                    </div>
+                    <div class="readme-actions">
+                        <a href="https://github.com/thearxos/tools-scripts" target="_blank" class="readme-btn">
+                            View on GitHub
+                        </a>
+                        <button class="readme-btn" onclick="copyContent('scriptsContent')">
+                            Copy Content
+                        </button>
+                    </div>
+                </div>
+                <div class="readme-content" id="scriptsContent">
+                    <div class="loading">Loading scripts documentation...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aliases Tab -->
+        <div id="aliases-tab" class="tab-content">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalAliases">0</div>
+                    <div class="stat-label">Total Aliases</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCategories">0</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-box" id="aliasSearch" placeholder="🔍 Search aliases... (e.g., 'git', 'system', 'network')">
+            </div>
+
+            <div class="aliases-grid" id="aliasesGrid">
+                <div class="loading">Loading aliases...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        const fontSize = 14;
+        const drops = Array(Math.floor(canvas.width / fontSize)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#cccccc';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrix[Math.floor(Math.random() * matrix.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tab + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Copy Content
+        function copyContent(elementId) {
+            const content = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Content copied to clipboard!');
+            });
+        }
+
+        // Load Scripts README
+        async function loadScriptsReadme() {
+            const content = document.getElementById('scriptsContent');
+            
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/thearxos/tools-scripts/main/README.md');
+                
+                if (!response.ok) throw new Error('Failed to load');
+                
+                const markdown = await response.text();
+                
+                let html = markdown
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+                    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+                    .replace(/`([^`]+)`/gim, '<code>$1</code>')
+                    .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2" target="_blank">$1</a>')
+                    .replace(/\n/gim, '<br>');
+                
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 60px;">
+                        <p style="color: var(--fg-dim); margin-bottom: 20px;">
+                            Could not load scripts documentation from GitHub.
+                        </p>
+                        <a href="https://github.com/thearxos/tools-scripts" 
+                           target="_blank" 
+                           class="readme-btn"
+                           style="display: inline-block;">
+                            View on GitHub
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Enhanced Alias Database with categories and descriptions
+        const aliasDatabase = {
+            // Navigation Aliases
+            '-': { cmd: 'cd -', desc: 'Go to previous directory', category: 'Navigation', icon: '📁' },
+            '..': { cmd: 'cd ..', desc: 'Go up one directory level', category: 'Navigation', icon: '📁' },
+            '...': { cmd: 'cd ../..', desc: 'Go up two directory levels', category: 'Navigation', icon: '📁' },
+            '....': { cmd: 'cd ../../..', desc: 'Go up three directory levels', category: 'Navigation', icon: '📁' },
+            '.....': { cmd: 'cd ../../../..', desc: 'Go up four directory levels', category: 'Navigation', icon: '📁' },
+
+            // Git Aliases
+            'g': { cmd: 'git', desc: 'Git command shortcut', category: 'Git', icon: '🔀' },
+            'gs': { cmd: 'git status', desc: 'Show git repository status', category: 'Git', icon: '🔀' },
+            'ga': { cmd: 'git add', desc: 'Add files to staging area', category: 'Git', icon: '🔀' },
+            'gaa': { cmd: 'git add --all', desc: 'Add all files to staging', category: 'Git', icon: '🔀' },
+            'gc': { cmd: 'git commit -m', desc: 'Commit changes with message', category: 'Git', icon: '🔀' },
+            'gp': { cmd: 'git push', desc: 'Push commits to remote', category: 'Git', icon: '🔀' },
+            'gpl': { cmd: 'git pull', desc: 'Pull changes from remote', category: 'Git', icon: '🔀' },
+            'gd': { cmd: 'git diff', desc: 'Show changes between commits', category: 'Git', icon: '🔀' },
+            'gl': { cmd: 'git log --oneline --graph --decorate', desc: 'Show pretty git log', category: 'Git', icon: '🔀' },
+            'gco': { cmd: 'git checkout', desc: 'Switch branches or restore files', category: 'Git', icon: '🔀' },
+
+            // ArxOS System Management
+            'arxos-update': { cmd: 'sudo pacman -Syy && sudo pacman -Syu', desc: 'Update entire system (official + AUR)', category: 'ArxOS', icon: '🛡️' },
+            'arxos-install': { cmd: 'sudo pacman -Syu', desc: 'Install packages with system update', category: 'ArxOS', icon: '🛡️' },
+            'arxos-remove': { cmd: 'sudo pacman -Rns', desc: 'Remove package and dependencies', category: 'ArxOS', icon: '🛡️' },
+            'arxos-clean': { cmd: 'sudo pacman -Scc', desc: 'Clean package cache', category: 'ArxOS', icon: '🛡️' },
+            'arxos-orphans': { cmd: 'sudo pacman -Rns $(pacman -Qtdq)', desc: 'Remove orphaned packages', category: 'ArxOS', icon: '🛡️' },
+            'arxos-mirrors': { cmd: 'sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist', desc: 'Update and rank fastest mirrors', category: 'ArxOS', icon: '🛡️' },
+
+            // Performance
+            'arxos-boostmode': { cmd: 'sudo cpu-governor performance', desc: 'Enable maximum CPU performance', category: 'Performance', icon: '⚡' },
+            'arxos-powersave': { cmd: 'sudo cpu-governor powersave', desc: 'Enable power saving mode', category: 'Performance', icon: '⚡' },
+            'arxos-cpu-status': { cmd: 'sudo cpu-governor status', desc: 'Show current CPU governor status', category: 'Performance', icon: '⚡' },
+
+            // Network & Security
+            'connections': { cmd: 'sudo ss -tunap', desc: 'Show all network connections', category: 'Network', icon: '🌐' },
+            'portsopen': { cmd: 'sudo netstat -tulpn | grep LISTEN', desc: 'Show listening ports', category: 'Network', icon: '🌐' },
+            'localip': { cmd: 'ip -4 addr show | grep inet | grep -v 127.0.0.1', desc: 'Display local IP addresses', category: 'Network', icon: '🌐' },
+            'myip': { cmd: 'curl -s ifconfig.me && echo', desc: 'Show external/public IP address', category: 'Network', icon: '🌐' },
+            'wifi': { cmd: 'nmcli device wifi list', desc: 'List available WiFi networks', category: 'Network', icon: '🌐' },
+            'wifi-connect': { cmd: 'nmcli device wifi connect', desc: 'Connect to WiFi network', category: 'Network', icon: '🌐' },
+
+            // System Information
+            'sysinfo': { cmd: 'inxi -Fxz', desc: 'Comprehensive system information', category: 'System Info', icon: '💻' },
+            'meminfo': { cmd: 'free -h && echo && ps aux --sort=-%mem | head -10', desc: 'Memory usage and top processes', category: 'System Info', icon: '💻' },
+            'diskinfo': { cmd: 'df -h / && echo && sudo du -hx / --max-depth=1 | sort -rh | head -n 20', desc: 'Disk usage information', category: 'System Info', icon: '💻' },
+            'temps': { cmd: 'sensors', desc: 'Show CPU/GPU temperatures', category: 'System Info', icon: '💻' },
+            'procs': { cmd: 'ps aux --sort=-%cpu | head -20', desc: 'Show top CPU-consuming processes', category: 'System Info', icon: '💻' },
+
+            // File Operations
+            'ls': { cmd: 'ls --color=auto', desc: 'List files with colors', category: 'Files', icon: '📄' },
+            'la': { cmd: 'ls -A', desc: 'List all files including hidden', category: 'Files', icon: '📄' },
+            'll': { cmd: 'ls -l', desc: 'List files in long format', category: 'Files', icon: '📄' },
+            'lsa': { cmd: 'ls -lah', desc: 'List all files with details', category: 'Files', icon: '📄' },
+            'cp': { cmd: 'cp -iv', desc: 'Copy files with confirmation', category: 'Files', icon: '📄' },
+            'mv': { cmd: 'mv -iv', desc: 'Move files with confirmation', category: 'Files', icon: '📄' },
+            'mkdir': { cmd: 'mkdir -pv', desc: 'Create directories with verbose output', category: 'Files', icon: '📄' },
+
+            // Systemd Services
+            'service-start': { cmd: 'sudo systemctl start', desc: 'Start a systemd service', category: 'Services', icon: '⚙️' },
+            'service-stop': { cmd: 'sudo systemctl stop', desc: 'Stop a systemd service', category: 'Services', icon: '⚙️' },
+            'service-restart': { cmd: 'sudo systemctl restart', desc: 'Restart a systemd service', category: 'Services', icon: '⚙️' },
+            'service-enable': { cmd: 'sudo systemctl enable', desc: 'Enable service on boot', category: 'Services', icon: '⚙️' },
+            'service-disable': { cmd: 'sudo systemctl disable', desc: 'Disable service from boot', category: 'Services', icon: '⚙️' },
+            'service-list': { cmd: 'systemctl list-units --type=service', desc: 'List all services', category: 'Services', icon: '⚙️' },
+            'service-failed': { cmd: 'systemctl --failed', desc: 'Show failed services', category: 'Services', icon: '⚙️' },
+
+            // Logs
+            'logs': { cmd: 'sudo journalctl -xe', desc: 'View system logs with errors', category: 'Logs', icon: '📋' },
+            'logs-boot': { cmd: 'sudo journalctl -b', desc: 'Show logs from current boot', category: 'Logs', icon: '📋' },
+            'logs-follow': { cmd: 'sudo journalctl -f', desc: 'Follow system logs in real-time', category: 'Logs', icon: '📋' },
+            'logs-service': { cmd: 'sudo journalctl -u', desc: 'Show logs for specific service', category: 'Logs', icon: '📋' },
+
+            // Package Management
+            'pkgcount': { cmd: 'pacman -Q | wc -l', desc: 'Count installed packages', category: 'Packages', icon: '📦' },
+            'pkglist': { cmd: 'pacman -Qe', desc: 'List explicitly installed packages', category: 'Packages', icon: '📦' },
+            'pkgown': { cmd: 'pacman -Qo', desc: 'Find which package owns a file', category: 'Packages', icon: '📦' },
+            'pkgsize': { cmd: 'expac -H M "%011m\t%-20n\t%10d" | sort -n -r | head -20', desc: 'Show largest installed packages', category: 'Packages', icon: '📦' },
+
+            // Web Search (via web browser)
+            'google': { cmd: 'web_search google', desc: 'Search Google', category: 'Web Search', icon: '🔍' },
+            'github': { cmd: 'web_search github', desc: 'Search GitHub', category: 'Web Search', icon: '🔍' },
+            'stackoverflow': { cmd: 'web_search stackoverflow', desc: 'Search Stack Overflow', category: 'Web Search', icon: '🔍' },
+            'wiki': { cmd: 'web_search duckduckgo \\!w', desc: 'Search Wikipedia', category: 'Web Search', icon: '🔍' },
+
+            // Utilities
+            'py': { cmd: 'python3', desc: 'Run Python 3 interpreter', category: 'Utilities', icon: '🐍' },
+            'serve': { cmd: 'python3 -m http.server 8000', desc: 'Start HTTP server on port 8000', category: 'Utilities', icon: '🌐' },
+            'cls': { cmd: 'clear', desc: 'Clear terminal screen', category: 'Utilities', icon: '🧹' },
+            'term': { cmd: 'clear', desc: 'Clear terminal (alternative)', category: 'Utilities', icon: '🧹' },
+            'h': { cmd: 'history', desc: 'Show command history', category: 'Utilities', icon: '📜' },
+            'hs': { cmd: 'history | grep', desc: 'Search command history', category: 'Utilities', icon: '📜' },
+
+            // Network Testing
+            'ping1': { cmd: 'ping -c 5 1.1.1.1', desc: 'Ping Cloudflare DNS (1.1.1.1)', category: 'Network Test', icon: '📡' },
+            'ping8': { cmd: 'ping -c 5 8.8.8.8', desc: 'Ping Google DNS (8.8.8.8)', category: 'Network Test', icon: '📡' },
+            'speedtest': { cmd: 'netspeed -q', desc: 'Quick internet speed test', category: 'Network Test', icon: '📡' },
+            'speedtest-full': { cmd: 'netspeed -f', desc: 'Full internet speed test', category: 'Network Test', icon: '📡' }
+        };
+
+        // Load Aliases
+        function loadAliases() {
+            const grid = document.getElementById('aliasesGrid');
+            const aliases = Object.entries(aliasDatabase);
+            
+            // Update stats
+            document.getElementById('totalAliases').textContent = aliases.length;
+            const categories = [...new Set(aliases.map(([_, data]) => data.category))];
+            document.getElementById('totalCategories').textContent = categories.length;
+
+            // Create cards
+            grid.innerHTML = aliases.map(([name, data]) => `
+                <div class="alias-card" data-category="${data.category}" data-name="${name}">
+                    <div class="alias-header">
+                        <span class="alias-icon">${data.icon}</span>
+                        <div class="alias-name">${name}</div>
+                    </div>
+                    <div class="alias-command">${data.cmd}</div>
+                    <div class="alias-description">${data.desc}</div>
+                    <span class="alias-category">${data.category}</span>
+                </div>
+            `).join('');
+
+            // Stagger animation
+            document.querySelectorAll('.alias-card').forEach((card, i) => {
+                card.style.animation = `fadeIn 0.5s ease ${i * 0.05}s backwards`;
+            });
+        }
+
+        // Search Aliases
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchBox = document.getElementById('aliasSearch');
+            
+            searchBox?.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.alias-card');
+
+                cards.forEach(card => {
+                    const name = card.dataset.name.toLowerCase();
+                    const category = card.dataset.category.toLowerCase();
+                    const text = card.textContent.toLowerCase();
+
+                    if (name.includes(query) || category.includes(query) || text.includes(query)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Load content on page load
+        window.addEventListener('load', () => {
+            loadScriptsReadme();
+            loadAliases();
+        });
+    </script>
+</body>
+</html>
