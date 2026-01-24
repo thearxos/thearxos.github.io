@@ -317,6 +317,7 @@
             font-size: 14px;
             border: 2px solid;
             cursor: pointer;
+            display: inline-block;
         }
 
         .btn-primary {
@@ -505,8 +506,8 @@
     <canvas id="matrix-canvas"></canvas>
 
     <nav>
-        <a href="main.html" class="logo">ARXOS</a>
-        <a href="main.html" class="back-btn">← Back to Main</a>
+        <a href="index.html" class="logo">ARXOS</a>
+        <a href="index.html" class="back-btn">← Back to Main</a>
     </nav>
 
     <section class="hero">
@@ -571,13 +572,6 @@
                 readmeFile: 'venus.md'
             }
             // Future releases will be added here and automatically sorted
-            // {
-            //     version: '2026.2',
-            //     versionNum: 2026.2,
-            //     codename: 'Mars',
-            //     icon: '🔴',
-            //     ...
-            // }
         ];
 
         // Sort releases by version number (highest first)
@@ -686,8 +680,8 @@
                         </div>
                         
                         <div class="release-actions">
-                            <a href="#" class="btn btn-primary" onclick="event.stopPropagation(); alert('Download coming soon!');">
-                                Download ISO
+                            <a href="portal.html" class="btn btn-primary" onclick="event.stopPropagation();">
+                                📥 Download ISO
                             </a>
                             <a href="https://github.com/thearxos/releases/blob/main/${release.readmeFile}" 
                                target="_blank" 
