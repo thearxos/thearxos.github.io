@@ -1,7 +1,7 @@
 # <p align="center">🛡️ ARXOS - Official Repository</p>
 
 <p align="center">
-  <img src="https://github.com/thearxos/thearxos.github.io/raw/main/ARXOS.png" alt="ARXOS Logo" width="400" />
+  <video src="https://github.com/thearxos/thearxos.github.io/raw/main/arxos.mp4" autoplay loop muted playsinline width="100%"></video>
 </p>
 
 <p align="center">
