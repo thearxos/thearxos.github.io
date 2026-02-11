@@ -26,17 +26,7 @@
 </p>
 
 <div align="center">
-
-```ascii
-    ___    ____  _  ______  _____
-   /   |  / __ \| |/ / __ \/ ___/
-  / /| | / /_/ /|   / / / /\__ \ 
- / ___ |/ _, _//   / /_/ /___/ / 
-/_/  |_/_/ |_|/_/|_\____//____/  
-                                  
-Where Performance Meets Penetration Testing
-```
-
+  <video src="https://github.com/thearxos/thearxos.github.io/raw/main/arxos.mp4" autoplay loop muted playsinline width="100%"></video>
 </div>
 
 ---
