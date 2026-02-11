@@ -180,6 +180,11 @@
             z-index: 10;
         }
 
+        .release-badge.legacy {
+            background: linear-gradient(135deg, #444, #333);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
         .release-card {
             background: linear-gradient(135deg, var(--bg-card), var(--bg-medium));
             border: 2px solid var(--border);
@@ -194,6 +199,17 @@
             border-color: var(--accent-light);
             transform: translateX(10px);
             box-shadow: 0 20px 60px rgba(255, 255, 255, 0.2);
+        }
+
+        .release-card.legacy {
+            opacity: 0.6;
+            border-color: #222;
+        }
+
+        .release-card.legacy:hover {
+            opacity: 0.85;
+            border-color: #555;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.08);
         }
 
         .release-header {
@@ -263,6 +279,18 @@
             background: rgba(33, 150, 243, 0.2);
             border: 1px solid #2196F3;
             color: #2196F3;
+        }
+
+        .badge-legacy {
+            background: rgba(255, 152, 0, 0.15);
+            border: 1px solid #FF9800;
+            color: #FF9800;
+        }
+
+        .badge-eol {
+            background: rgba(244, 67, 54, 0.15);
+            border: 1px solid #F44336;
+            color: #F44336;
         }
 
         .release-summary {
@@ -343,6 +371,14 @@
             background: var(--accent-light);
             color: var(--bg-hard);
             transform: translateY(-2px);
+        }
+
+        .btn-disabled {
+            background: transparent;
+            color: #555;
+            border-color: #333;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         .release-details {
@@ -442,6 +478,17 @@
             font-size: 2rem;
             color: var(--accent-light);
             margin-bottom: 20px;
+        }
+
+        .legacy-notice {
+            background: rgba(255, 152, 0, 0.08);
+            border: 1px solid rgba(255, 152, 0, 0.25);
+            border-radius: 10px;
+            padding: 14px 20px;
+            margin: 20px 0 0;
+            color: #FF9800;
+            font-size: 0.85rem;
+            line-height: 1.6;
         }
 
         @media (max-width: 768px) {
@@ -555,14 +602,33 @@
         // Release definitions with version numbers for sorting
         const releases = [
             {
+                version: '2026.2',
+                versionNum: 2026.2,
+                codename: 'Mars',
+                icon: '🔴',
+                date: 'February 2026',
+                type: 'Rolling LTS',
+                isLatest: true,
+                isLegacy: false,
+                summary: 'Second major release of ArxOS. Migrated to XFCE 4.20.2, source-built Calamares 3.4.1 (Qt6), SDDM display manager, Plank dock, 54 custom Reversal themes, 9 custom tools including WallPimp, and 2,840+ BlackArch security tools.',
+                stats: {
+                    tools: '2840+',
+                    size: '~30GB',
+                    kernel: 'LTS',
+                    desktop: 'XFCE 4.20'
+                },
+                readmeFile: 'mars.md'
+            },
+            {
                 version: '2026.1',
                 versionNum: 2026.1,
                 codename: 'Venus',
                 icon: '🪐',
                 date: 'January 2026',
-                type: 'Rolling LTS',
-                isLatest: true,
-                summary: 'First official release of ArxOS. Complete security arsenal with 2800+ BlackArch tools, KDE Plasma 6, and custom CPU Governor for maximum performance.',
+                type: 'Legacy',
+                isLatest: false,
+                isLegacy: true,
+                summary: 'First official release of ArxOS. Complete security arsenal with 2800+ BlackArch tools, KDE Plasma 6, and custom CPU Governor for maximum performance. This release has been retired and is no longer available for download.',
                 stats: {
                     tools: '2800+',
                     size: '~30GB',
@@ -652,8 +718,8 @@
 
             timeline.innerHTML = releases.map((release, index) => `
                 <div class="release-item" style="animation-delay: ${index * 0.1}s">
-                    <div class="release-badge">${release.icon}</div>
-                    <div class="release-card" onclick="toggleDetails(${index})">
+                    <div class="release-badge ${release.isLegacy ? 'legacy' : ''}">${release.icon}</div>
+                    <div class="release-card ${release.isLegacy ? 'legacy' : ''}" onclick="toggleDetails(${index})">
                         <div class="release-header">
                             <div class="release-title">
                                 <h2>v${release.version}</h2>
@@ -662,7 +728,8 @@
                             </div>
                             <div class="release-badges">
                                 ${release.isLatest ? '<span class="badge badge-latest">Latest</span>' : ''}
-                                <span class="badge badge-lts">${release.type}</span>
+                                ${release.isLegacy ? '<span class="badge badge-legacy">Legacy</span>' : ''}
+                                ${release.isLegacy ? '<span class="badge badge-eol">EOL</span>' : `<span class="badge badge-lts">${release.type}</span>`}
                             </div>
                         </div>
                         
@@ -680,9 +747,12 @@
                         </div>
                         
                         <div class="release-actions">
-                            <a href="portal.html" class="btn btn-primary" onclick="event.stopPropagation();">
-                                📥 Download ISO
-                            </a>
+                            ${release.isLegacy 
+                                ? '<span class="btn btn-disabled">📥 No Longer Available</span>'
+                                : `<a href="portal.html" class="btn btn-primary" onclick="event.stopPropagation();">
+                                    📥 Download ISO
+                                  </a>`
+                            }
                             <a href="https://github.com/thearxos/releases/blob/main/${release.readmeFile}" 
                                target="_blank" 
                                class="btn btn-secondary"
@@ -690,6 +760,13 @@
                                 View on GitHub
                             </a>
                         </div>
+
+                        ${release.isLegacy 
+                            ? `<div class="legacy-notice">
+                                ⚠ This release has been retired. ISOs are no longer hosted on download servers. 
+                                Please use <strong>v${releases[0].version} ~ ${releases[0].codename}</strong> instead.
+                               </div>` 
+                            : ''}
                         
                         <div class="release-details" id="details-${index}">
                             <div class="details-content" id="readme-content-${index}">
