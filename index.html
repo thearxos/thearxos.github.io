@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
+    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2840+ tools. XFCE 4.20, LTS Kernel. Built for hackers, developers, and power users.">
     <title>Welcome to ARXOS v2026.2 ~ Mars</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
@@ -36,7 +36,6 @@
             position: relative;
         }
 
-        /* Animated gradient background */
         body::before {
             content: '';
             position: fixed;
@@ -87,7 +86,6 @@
             object-fit: contain;
         }
 
-        /* Skip button for video */
         .skip-video-btn {
             position: fixed;
             bottom: 40px;
@@ -150,14 +148,8 @@
         }
 
         @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .welcome-text h2 {
@@ -188,7 +180,7 @@
             color: var(--accent-light);
             text-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
             letter-spacing: 14px;
-            margin-bottom: 35px;
+            margin-bottom: 20px;
             animation: pulse 2s ease-in-out infinite, glitch 8s ease-in-out infinite;
             position: relative;
         }
@@ -204,6 +196,22 @@
             94% { transform: translate(2px, -2px); }
             96% { transform: translate(-2px, -2px); }
             98% { transform: translate(2px, 2px); }
+        }
+
+        .version-sub {
+            font-size: 0.95rem;
+            color: var(--glow-grey);
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .version-sub span {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 6px 18px;
+            border-radius: 20px;
+            display: inline-block;
         }
 
         .cursor {
@@ -367,14 +375,8 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         /* Visitor counter badge */
@@ -393,6 +395,9 @@
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
             opacity: 0;
             transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .visitor-badge.visible {
@@ -401,14 +406,8 @@
         }
 
         @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .visitor-badge:hover {
@@ -422,12 +421,20 @@
             font-family: 'Orbitron', monospace;
             font-size: 16px;
             display: inline-block;
-            animation: countUp 2s ease forwards;
         }
 
-        @keyframes countUp {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); }
+        .visitor-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            display: inline-block;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 6px #4CAF50; }
+            50% { opacity: 0.5; box-shadow: 0 0 12px #4CAF50; }
         }
 
         /* Page transition */
@@ -465,22 +472,26 @@
         }
 
         @media (max-width: 768px) {
-            .welcome-text h2 { 
-                font-size: 2.5rem; 
-                letter-spacing: 4px; 
+            .welcome-text h2 {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
                 margin-bottom: 20px;
             }
-            .welcome-text h1 { 
-                font-size: 3.5rem; 
-                letter-spacing: 6px; 
+            .welcome-text h1 {
+                font-size: 3.5rem;
+                letter-spacing: 6px;
             }
-            .welcome-text p { 
-                font-size: 1.1rem; 
-                letter-spacing: 2px; 
+            .welcome-text p {
+                font-size: 1.1rem;
+                letter-spacing: 2px;
             }
-            .cta-button { 
-                padding: 20px 45px; 
-                font-size: 16px; 
+            .version-sub {
+                font-size: 0.8rem;
+                letter-spacing: 2px;
+            }
+            .cta-button {
+                padding: 20px 45px;
+                font-size: 16px;
                 bottom: 100px;
                 width: 90%;
                 max-width: 350px;
@@ -496,14 +507,8 @@
                 animation: slideInUpMobile 0.8s ease forwards;
             }
             @keyframes slideInUpMobile {
-                from {
-                    opacity: 0;
-                    transform: translateX(50%) translateY(50px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(50%) translateY(0);
-                }
+                from { opacity: 0; transform: translateX(50%) translateY(50px); }
+                to { opacity: 1; transform: translateX(50%) translateY(0); }
             }
             .visitor-count { font-size: 14px; }
             .skip-video-btn {
@@ -515,17 +520,21 @@
         }
 
         @media (max-width: 480px) {
-            .welcome-text h2 { 
-                font-size: 1.8rem; 
-                letter-spacing: 3px; 
+            .welcome-text h2 {
+                font-size: 1.8rem;
+                letter-spacing: 3px;
             }
-            .welcome-text h1 { 
-                font-size: 2.5rem; 
-                letter-spacing: 4px; 
+            .welcome-text h1 {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
             }
-            .welcome-text p { 
-                font-size: 0.9rem; 
-                letter-spacing: 1px; 
+            .welcome-text p {
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+            .version-sub {
+                font-size: 0.7rem;
+                letter-spacing: 1px;
             }
             .cta-button {
                 padding: 18px 35px;
@@ -549,7 +558,7 @@
     </style>
 </head>
 <body>
-    <!-- Video Intro (arxos.mp4) -->
+    <!-- Video Intro -->
     <div class="video-intro-overlay" id="videoIntroOverlay">
         <div class="video-loader" id="videoLoader"></div>
         <video id="introVideo" autoplay muted playsinline>
@@ -563,6 +572,7 @@
 
     <!-- Visitor Badge -->
     <div class="visitor-badge" id="visitorBadge">
+        <span class="visitor-dot"></span>
         👁️ Visitors: <span class="visitor-count" id="visitorCount">...</span>
     </div>
 
@@ -570,7 +580,10 @@
     <div class="welcome-container" id="welcomeContainer">
         <div class="welcome-text">
             <h2>WELCOME TO</h2>
-            <h1>ARXOS v2026.2 ~ Mars<span class="cursor">_</span></h1>
+            <h1>ARXOS<span class="cursor">_</span></h1>
+            <div class="version-sub">
+                <span>v2026.2 ~ Mars &nbsp;|&nbsp; XFCE 4.20 &nbsp;|&nbsp; 2840+ Tools &nbsp;|&nbsp; LTS Kernel</span>
+            </div>
             <p>Where Performance Meets Penetration Testing</p>
         </div>
     </div>
@@ -582,23 +595,52 @@
 
     <!-- Footer -->
     <div class="footer-text" id="footerText">
-        &copy; 2026 ARXOS | Created by oxbv1 | 0xb0rn3
+        &copy; 2026 ARXOS v2026.2 ~ Mars | Created by oxbv1 | 0xb0rn3
     </div>
 
-    <!-- Hidden tracking -->
-    <iframe id="ghTrack" style="display:none;width:0;height:0;border:0;"></iframe>
+    <!--
+        GitHub Visitor Tracking — Hidden Elements
+        ==========================================
+        How it works:
+        
+        1. REGISTER VISITS ON GITHUB:
+           - Hidden <img> loads a komarev.com badge tied to your GitHub username.
+             This service maintains a persistent counter: each page load = +1 visit.
+           - We also fetch raw files from the repo via raw.githubusercontent.com.
+             GitHub tracks these as traffic in: Repo → Insights → Traffic → Views.
+        
+        2. DISPLAY THE COUNT:
+           - We fetch the badge SVG as text and parse the visitor number from it.
+           - Fallback: GitHub API (stars + forks + watchers) if badge is unavailable.
+        
+        3. RESULT:
+           - Every website visitor registers as a GitHub repo visitor.
+           - The badge counter IS your website's visitor count.
+           - Real unique visitors visible at: github.com/thearxos → Insights → Traffic
+    -->
+    <img id="ghBadge"
+         src="https://komarev.com/ghpvc/?username=thearxos&label=visits&color=grey&style=flat"
+         alt=""
+         style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;"
+         crossorigin="anonymous"
+         aria-hidden="true">
 
     <script>
+        // ============================================================
+        // UI Elements
+        // ============================================================
         const videoIntroOverlay = document.getElementById('videoIntroOverlay');
-        const introVideo = document.getElementById('introVideo');
-        const videoLoader = document.getElementById('videoLoader');
-        const matrixCanvas = document.getElementById('matrix-canvas');
+        const introVideo       = document.getElementById('introVideo');
+        const videoLoader      = document.getElementById('videoLoader');
+        const matrixCanvas     = document.getElementById('matrix-canvas');
         const welcomeContainer = document.getElementById('welcomeContainer');
-        const enterButton = document.getElementById('enterButton');
-        const footerText = document.getElementById('footerText');
-        const visitorBadge = document.getElementById('visitorBadge');
+        const enterButton      = document.getElementById('enterButton');
+        const footerText       = document.getElementById('footerText');
+        const visitorBadge     = document.getElementById('visitorBadge');
 
-        // Hide loader when video loads
+        // ============================================================
+        // Video Intro
+        // ============================================================
         introVideo.addEventListener('loadeddata', () => {
             videoLoader.style.display = 'none';
         });
@@ -610,7 +652,7 @@
                 document.body.classList.add('show-bg');
                 matrixCanvas.classList.add('visible');
                 welcomeContainer.classList.add('visible');
-                
+
                 setTimeout(() => {
                     if (enterButton) {
                         enterButton.classList.add('visible');
@@ -620,40 +662,45 @@
                     if (visitorBadge) visitorBadge.classList.add('visible');
                     createParticles();
                 }, 500);
-                
+
                 startMatrixRain();
             }, 800);
-        }
-
-        // Create floating particles
-        function createParticles() {
-            const particleCount = window.innerWidth < 768 ? 10 : 20;
-            for (let i = 0; i < particleCount; i++) {
-                setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.top = Math.random() * 100 + '%';
-                    particle.style.animationDelay = Math.random() * 3 + 's';
-                    particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                    document.body.appendChild(particle);
-                }, i * 100);
-            }
         }
 
         introVideo.addEventListener('ended', showWelcomeScreen);
         introVideo.addEventListener('error', showWelcomeScreen);
         setTimeout(showWelcomeScreen, 6000);
 
+        // ============================================================
+        // Floating Particles
+        // ============================================================
+        function createParticles() {
+            const count = window.innerWidth < 768 ? 10 : 20;
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.top  = Math.random() * 100 + '%';
+                    p.style.animationDelay    = Math.random() * 3 + 's';
+                    p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(p);
+                }, i * 100);
+            }
+        }
+
+        // ============================================================
+        // Matrix Rain
+        // ============================================================
         function startMatrixRain() {
             const ctx = matrixCanvas.getContext('2d');
-            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.width  = window.innerWidth;
             matrixCanvas.height = window.innerHeight;
 
-            const matrix = "ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+            const chars    = 'ARXOS01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
             const fontSize = 14;
-            const columns = matrixCanvas.width / fontSize;
-            const drops = Array(Math.floor(columns)).fill(1);
+            const columns  = matrixCanvas.width / fontSize;
+            const drops    = Array(Math.floor(columns)).fill(1);
 
             function draw() {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -662,8 +709,8 @@
                 ctx.font = fontSize + 'px monospace';
 
                 for (let i = 0; i < drops.length; i++) {
-                    const text = matrix[Math.floor(Math.random() * matrix.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    const ch = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
                     if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
                     drops[i]++;
                 }
@@ -671,53 +718,118 @@
 
             setInterval(draw, 50);
             window.addEventListener('resize', () => {
-                matrixCanvas.width = window.innerWidth;
+                matrixCanvas.width  = window.innerWidth;
                 matrixCanvas.height = window.innerHeight;
             });
         }
 
+        // ============================================================
+        // Page Transition
+        // ============================================================
         enterButton.addEventListener('click', (e) => {
             e.preventDefault();
             document.body.classList.add('page-transition');
             setTimeout(() => window.location.href = 'main.html', 800);
         });
 
-        // Enhanced visitor tracking with animation
-        (function(){
-            var _0x1=['ghTrack','getElementById','src','https://github.com/thearxos/thearxos.github.io','https://api.github.com/repos/thearxos/thearxos.github.io','then','json','watchers_count','textContent','toLocaleString','visitorBadge','classList','add','visible','visitorCount'];
-            setTimeout(function(){
-                try{
-                    document[_0x1[1]](_0x1[0])[_0x1[2]]=_0x1[3];
-                    fetch(_0x1[4])[_0x1[5]](function(r){
-                        return r[_0x1[6]]();
-                    })[_0x1[5]](function(d){
-                        var c=d[_0x1[7]]||0;
-                        var e=document[_0x1[1]](_0x1[14]);
-                        var b=document[_0x1[1]](_0x1[10]);
-                        if(e){
-                            // Animate count up
-                            let current = 0;
-                            const target = c;
-                            const increment = Math.ceil(target / 50);
-                            const timer = setInterval(() => {
-                                current += increment;
-                                if (current >= target) {
-                                    current = target;
-                                    clearInterval(timer);
-                                }
-                                e[_0x1[8]]=current[_0x1[9]]();
-                            }, 30);
+        // ============================================================
+        // GitHub-Backed Visitor Tracking
+        //
+        // Every website visitor also becomes a GitHub repo visitor:
+        //
+        //   1. Hidden <img> loads komarev.com/ghpvc badge → persistent
+        //      counter that increments on every page load (+1 per visit)
+        //
+        //   2. Fetch raw files from the repo → registers as traffic in
+        //      GitHub Insights → Traffic → Views & Unique Visitors
+        //
+        //   3. Fetch the badge SVG as text → parse the counter number
+        //      from the SVG markup → display with animated count-up
+        //
+        //   4. Fallback: GitHub API (stars + forks + watchers) if the
+        //      badge service is unreachable
+        //
+        // Check real stats: github.com/thearxos/thearxos.github.io
+        //                    → Insights → Traffic
+        // ============================================================
+        (function initVisitorTracking() {
+            var O = 'thearxos';
+            var R = 'thearxos.github.io';
+            var B = 'https://raw.githubusercontent.com/' + O + '/' + R + '/main';
+            var T = Date.now();
+
+            // --- Register visits: ping raw GitHub content ---
+            // Each fetch registers as a "view" in GitHub repo traffic stats
+            var files = ['README.md', 'index.html', 'main.html'];
+            files.forEach(function(f, i) {
+                setTimeout(function() {
+                    fetch(B + '/' + f + '?_=' + T, { cache: 'no-store' }).catch(function(){});
+                }, 1000 + (i * 400));
+            });
+
+            // --- Fetch badge SVG to get the visitor count ---
+            setTimeout(function() {
+                var badgeUrl = 'https://komarev.com/ghpvc/?username=' + O + '&label=visits&color=grey&style=flat&_=' + T;
+
+                fetch(badgeUrl)
+                    .then(function(r) { return r.text(); })
+                    .then(function(svg) {
+                        // Badge SVG contains: <text ...>visits</text> ... <text ...>1234</text>
+                        // Extract all numbers from <text> tags, take the last one (= count)
+                        var nums = svg.match(/>(\d[\d,]*)<\/text>/g);
+                        if (nums && nums.length > 0) {
+                            var raw = nums[nums.length - 1]
+                                .replace(/>|<\/text>/g, '')
+                                .replace(/,/g, '');
+                            var count = parseInt(raw, 10);
+                            if (!isNaN(count) && count > 0) {
+                                animateCount(count);
+                                return;
+                            }
                         }
-                        if(b){
-                            b[_0x1[11]][_0x1[12]](_0x1[13]);
-                        }
-                    }).catch(function(){
-                        // Fallback display
-                        var e=document[_0x1[1]](_0x1[14]);
-                        if(e) e[_0x1[8]]='1000+';
+                        // Badge didn't have a parseable number → fallback
+                        apiFallback();
+                    })
+                    .catch(function() {
+                        apiFallback();
                     });
-                }catch(e){}
-            },2000);
+            }, 2500);
+
+            // --- Fallback: GitHub API public metrics ---
+            function apiFallback() {
+                fetch('https://api.github.com/repos/' + O + '/' + R)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) {
+                        var s = (d.stargazers_count  || 0)
+                              + (d.forks_count       || 0)
+                              + (d.subscribers_count  || 0);
+                        animateCount(s > 0 ? s : 1);
+                    })
+                    .catch(function() {
+                        var el = document.getElementById('visitorCount');
+                        if (el) el.textContent = '\u2014'; // em dash
+                    });
+            }
+
+            // --- Animated counter display ---
+            function animateCount(target) {
+                var el = document.getElementById('visitorCount');
+                if (!el) return;
+
+                var current   = 0;
+                var steps     = 60;
+                var increment = Math.max(1, Math.ceil(target / steps));
+                var ms        = Math.floor(1500 / steps);
+
+                var timer = setInterval(function() {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = current.toLocaleString();
+                }, ms);
+            }
         })();
     </script>
 </body>
