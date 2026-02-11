@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2800+ tools. Built for hackers, developers, and power users.">
-    <title>ARXOS v2026.1 ~ Venus - Where Performance Meets Penetration Testing</title>
+    <meta name="description" content="ARXOS - Arch-based penetration testing OS with 2840+ tools. Built for hackers, developers, and power users.">
+    <title>ARXOS v2026.2 ~ Mars - Where Performance Meets Penetration Testing</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
 
@@ -278,11 +278,28 @@
         .tagline {
             font-size: 1.5rem;
             color: var(--accent-light);
-            margin-bottom: 60px;
+            margin-bottom: 15px;
             letter-spacing: 4px;
             animation: slide-in-bottom 1s ease-out 0.3s backwards;
             position: relative;
             z-index: 1;
+        }
+
+        .version-tag {
+            font-size: 0.95rem;
+            color: var(--glow-grey);
+            letter-spacing: 3px;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: 1;
+            animation: fade-in 1s ease-out 0.5s backwards;
+        }
+
+        .version-tag span {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            padding: 6px 18px;
+            border-radius: 20px;
         }
 
         @keyframes slide-in-bottom {
@@ -1235,7 +1252,7 @@
     <canvas id="matrix-canvas"></canvas>
 
     <nav id="navbar">
-        <div class="logo">ARXOS</div>
+        <div class="logo">Arx Os</div>
         <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
             <span></span>
             <span></span>
@@ -1257,6 +1274,7 @@
         <img src="ARXOS.png" alt="ARXOS Logo" class="hero-logo">
         <h1>ARXOS</h1>
         <p class="tagline">Where Performance Meets Penetration Testing</p>
+        <div class="version-tag"><span>v2026.2 ~ Mars &nbsp;|&nbsp; XFCE 4.20 &nbsp;|&nbsp; LTS Kernel</span></div>
         <div class="cta-buttons">
             <a href="portal.html" class="btn">Download ISO</a>
             <a href="releases.html" class="btn">Releases</a> 
@@ -1270,33 +1288,33 @@
         <div class="features-grid">
             <div class="feature-card fade-up">
                 <div class="feature-icon">🔥</div>
-                <h3>2800+ Security Tools</h3>
+                <h3>2840+ Security Tools</h3>
                 <p>Complete BlackArch arsenal pre-installed. From reconnaissance to exploitation, everything you need for professional penetration testing.</p>
             </div>
             <div class="feature-card fade-up">
                 <div class="feature-icon">⚡</div>
                 <h3>Performance Optimized</h3>
-                <p>CPU Governor included for maximum performance. Configured for speed, not bloat.</p>
+                <p>CPU Governor included for maximum performance. LTS kernel for rock-solid stability. Configured for speed, not bloat.</p>
             </div>
             <div class="feature-card fade-up">
                 <div class="feature-icon">🎨</div>
-                <h3>KDE Plasma Desktop</h3>
-                <p>Beautiful, customizable, and powerful. Modern desktop environment tailored for professionals.</p>
+                <h3>XFCE 4.20 Desktop</h3>
+                <p>Lightweight, fast, and fully customized. 54 Reversal icon themes, Plank dock with 7 launchers, SDDM display manager, and WallPimp wallpaper manager with 1000+ backgrounds.</p>
             </div>
             <div class="feature-card fade-up">
                 <div class="feature-icon">🚀</div>
                 <h3>Zero Bloat</h3>
-                <p>Pure ArchBang base. No unnecessary packages. Only essential tools and 2800+ pentesting utilities.</p>
+                <p>Pure Arch base with no unnecessary packages. Only essential tools and 2840+ pentesting utilities. Every byte earns its place.</p>
             </div>
             <div class="feature-card fade-up">
                 <div class="feature-icon">💻</div>
-                <h3>Custom ZSH Config</h3>
-                <p>Optimized shell with aliases: 'update' for system updates, 'install' for packages, 'diskinfo' for storage.</p>
+                <h3>9 Custom Tools</h3>
+                <p>Purpose-built scripts: WallPimp, NovaBar, NovaDock, CPU Governor, MyFastfetch, wir3G, and more. Optimized ZSH with 50+ aliases.</p>
             </div>
             <div class="feature-card fade-up">
                 <div class="feature-icon">🛡️</div>
                 <h3>Built for Hackers</h3>
-                <p>Designed by hackers, for hackers. Perfect for bug bounties, penetration testing, and security research.</p>
+                <p>Source-built Calamares 3.4.1 (Qt6) installer. Designed by hackers, for hackers. Perfect for bug bounties, pentesting, and security research.</p>
             </div>
         </div>
     </section>
@@ -1305,16 +1323,16 @@
         <h2 class="section-title">By The Numbers</h2>
         <div class="stats-grid">
             <div class="stat-item fade-up">
-                <div class="stat-number">2800+</div>
+                <div class="stat-number">2840+</div>
                 <div class="stat-label">Security Tools</div>
             </div>
             <div class="stat-item fade-up">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Open Source</div>
+                <div class="stat-number">54</div>
+                <div class="stat-label">Icon Themes</div>
             </div>
             <div class="stat-item fade-up">
-                <div class="stat-number">0</div>
-                <div class="stat-label">Bloatware</div>
+                <div class="stat-number">9</div>
+                <div class="stat-label">Custom Tools</div>
             </div>
             <div class="stat-item fade-up">
                 <div class="stat-number">∞</div>
@@ -1324,10 +1342,10 @@
     </section>
 
     <section class="features reveal" id="download">
-        <h2 class="section-title">Get ARXOS</h2>
+        <h2 class="section-title">Get Arx Os</h2>
         <div class="contact-info">
             <p style="color: var(--fg-dim); margin-bottom: 40px; line-height: 2;">
-                Download ARXOS and unleash the full power of professional penetration testing.
+                Download ARXOS v2026.2 ~ Mars and unleash the full power of professional penetration testing.
             </p>
             <a href="portal.html" class="btn" style="margin: 25px;">Download ISO</a>
             <p style="color: var(--fg-dim); margin-top: 40px; font-size: 13px;">
@@ -1340,7 +1358,7 @@
         <h2 class="section-title">Technology & Documentation</h2>
     
         <div class="tech-intro">
-            <p>Dive deep into ArxOS architecture, custom tools, and productivity features</p>
+            <p>Dive deep into Arx OS architecture, custom tools, and productivity features</p>
         </div>
 
         <div class="readme-container">
@@ -1373,16 +1391,16 @@
             </div>
 
             <div class="tech-card fade-up">
-                <div class="tech-icon">🎨</div>
-                <h3>Custom Aliases</h3>
-                <p>50+ productivity aliases including arxos-update, arxos-health, whatsmyip, and more. Optimized for penetration testing workflows.</p>
-                <code>arxos-health</code>
+                <div class="tech-icon">🖼️</div>
+                <h3>WallPimp</h3>
+                <p>Wallpaper management tool with 1000+ curated backgrounds. Auto-rotation, category browsing, and seamless XFCE integration.</p>
+                <code>wallpimp --random</code>
             </div>
 
             <div class="tech-card fade-up">
                 <div class="tech-icon">🚀</div>
                 <h3>Oh-My-Zsh</h3>
-                <p>Enhanced shell with syntax highlighting, auto-suggestions, git integration, and custom prompt: �マシン👀username</p>
+                <p>Enhanced shell with syntax highlighting, auto-suggestions, git integration, and custom prompt: 🐧マシン💀username</p>
                 <code>myfastfetch</code>
             </div>
 
@@ -1391,6 +1409,20 @@
                 <h3>Fastfetch</h3>
                 <p>Random anime logo system info display with custom ArxOS branding. Shows hardware, software, and system stats beautifully.</p>
                 <code>Custom JSON config</code>
+            </div>
+
+            <div class="tech-card fade-up">
+                <div class="tech-icon">🔧</div>
+                <h3>Calamares 3.4.1</h3>
+                <p>Source-built Qt6 system installer. No plasma-framework dependency. Clean partition management with ArxOS branding throughout.</p>
+                <code>Source-built from Codeberg</code>
+            </div>
+
+            <div class="tech-card fade-up">
+                <div class="tech-icon">🎨</div>
+                <h3>54 Reversal Themes</h3>
+                <p>Complete icon theme collection with dark and light variants across multiple color accents. Fully integrated with XFCE and Plank dock.</p>
+                <code>NovaBar + NovaDock</code>
             </div>
         </div>
     </section>
@@ -1414,27 +1446,15 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 ARXOS. Created by oxbv1 | 0xb0rn3</p>
+        <p>&copy; 2026 Arx Os v2026.2 ~ Mars. Created by oxbv1 | 0xb0rn3</p>
         <div class="footer-links">
             <a href="#features">Features</a>
             <a href="#download">Download</a>
+            <a href="releases.html">Releases</a>
             <a href="#contact">Contact</a>
             <a href="https://0xb0rn3.github.io" target="_blank">Portfolio</a>
         </div>
     </footer>
-
-    <div id="downloadModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 style="color: var(--accent-light); font-size: 2.5rem; margin-bottom: 30px; font-family: 'Orbitron', monospace;">Thank You!</h2>
-            <p class="modal-message">
-                "Hey! Thank you for checking us out. ARXOS v2026.1 ~ Venus (our first rolling LTS release) is currently under maintenance and will be available very soon. We appreciate your support and patience. The official ISO image will be ready for download shortly."
-            </p>
-            <div class="timer-display" id="countdown"></div>
-            <p style="color: var(--fg-dim); margin-top: 20px;">Estimated time until v2026.1 ~ Venus release</p>
-            <p class="modal-signature">~ Yours truly, Senior Developer oxbv1 | 0xb0rn3</p>
-        </div>
-    </div>
 
     <div id="requestModal" class="request-modal">
         <div class="request-modal-content">
@@ -1442,7 +1462,7 @@
             <h2 style="color: var(--accent-light); font-size: 2.5rem; margin-bottom: 40px; font-family: 'Orbitron', monospace;">Request a Feature</h2>
             <p style="color: var(--fg-dim); margin-bottom: 40px;">Choose how you'd like to submit your feature request:</p>
             <div class="request-option">
-                <a href="mailto:contact.arxos@proton.me?subject=Feature Request for ARXOS">📧 Request via Email</a>
+                <a href="mailto:contact.arxos@proton.me?subject=Feature Request for ARXOS v2026.2">📧 Request via Email</a>
             </div>
             <div class="request-option">
                 <a href="https://github.com/thearxos/issues" target="_blank">🐙 Request via GitHub</a>
@@ -1544,15 +1564,6 @@
         });
 
         // Modal functions
-        function openModal() {
-            document.getElementById('downloadModal').style.display = 'block';
-            startCountdown();
-        }
-
-        function closeModal() {
-            document.getElementById('downloadModal').style.display = 'none';
-        }
-
         function openRequestModal() {
             document.getElementById('requestModal').style.display = 'block';
         }
@@ -1562,35 +1573,8 @@
         }
 
         window.onclick = function(event) {
-            const downloadModal = document.getElementById('downloadModal');
             const requestModal = document.getElementById('requestModal');
-            if (event.target == downloadModal) closeModal();
             if (event.target == requestModal) closeRequestModal();
-        }
-
-        // 24-hour countdown
-        function startCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            const targetTime = new Date().getTime() + (24 * 60 * 60 * 1000);
-            
-            const timer = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = targetTime - now;
-                
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                
-                countdownElement.innerHTML = 
-                    String(hours).padStart(2, '0') + ":" + 
-                    String(minutes).padStart(2, '0') + ":" + 
-                    String(seconds).padStart(2, '0');
-                
-                if (distance < 0) {
-                    clearInterval(timer);
-                    countdownElement.innerHTML = "00:00:00";
-                }
-            }, 1000);
         }
 
         // Load README from GitHub
